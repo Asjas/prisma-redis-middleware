@@ -1,0 +1,50 @@
+{
+  "name": "prisma-redis-middleware",
+  "main": "dist/index.mjs",
+  "version": "0.0.0",
+  "description": "Prisma Middleware for caching results of queries in Redis",
+  "engines": {
+    "node": ">=14"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Asjas/prisma-redis-middleware.git"
+  },
+  "keywords": [
+    "prisma",
+    "redis",
+    "prisma-middleware",
+    "caching"
+  ],
+  "author": "A-J Roos <asjas@hey.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Asjas/prisma-redis-middleware/issues"
+  },
+  "homepage": "https://github.com/Asjas/prisma-redis-middleware#readme",
+  "scripts": {
+    "build": "babel --extensions '.ts' src/ --out-dir dist/ --out-file-extension .mjs",
+    "clean": "rimraf dist",
+    "test": "echo \"Error: no test specified\" && exit 0",
+    "check-types": "tsc",
+    "lint": "eslint --ext .ts .",
+    "lint-fix": "npm run lint -- --fix",
+    "prettier": "prettier --ignore-path .eslintignore \"**/*.+(ts)\"",
+    "format": "npm run prettier -- --write",
+    "check-format": "npm run prettier -- --list-different",
+    "validate": "npm-run-all --parallel check-types check-format lint build"
+  },
+  "dependencies": {
+    "ioredis": "^4.27.6"
+  },
+  "devDependencies": {
+    "@babel/cli": "7.14.5",
+    "@babel/core": "7.14.6",
+    "@babel/preset-typescript": "7.14.5",
+    "babel-plugin-module-extension-resolver": "1.0.0-rc.2",
+    "eslint-config-asjas": "0.0.25",
+    "npm-run-all": "4.1.5",
+    "rimraf": "3.0.2",
+    "typescript": "4.3.5"
+  }
+}

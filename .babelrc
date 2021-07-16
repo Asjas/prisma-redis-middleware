@@ -1,0 +1,12 @@
+{
+  "comments": false,
+  "presets": ["@babel/preset-typescript"],
+  "plugins": [
+    [
+      "module-extension-resolver",
+      {
+        "dstExtension": ".mjs"
+      }
+    ]
+  ]
+}
