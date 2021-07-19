@@ -4,5 +4,8 @@
     "tsconfigRootDir": ".",
     "project": "tsconfig.json"
   },
-  "rules": {}
+  "rules": {
+    "no-shadow": 0,
+    "node/no-unpublished-import": 0
+  }
 }

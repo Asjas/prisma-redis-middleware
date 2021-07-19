@@ -1,15 +1,18 @@
 {
-  "include": ["src/**/*"],
+  "include": ["index.ts"],
   "exclude": ["node_modules"],
   "compilerOptions": {
+    "outDir": "dist",
     "incremental": true,
     "target": "ES2021",
     "module": "ESNext",
     "lib": ["ESNEXT"],
-    "noEmit": true,
     "moduleResolution": "Node",
+    "declaration": true,
+    "pretty": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "allowSyntheticDefaultImports": true
   }
 }
