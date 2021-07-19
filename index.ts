@@ -21,8 +21,10 @@ export type PrismaAction =
  * These options are being passed in to the middleware as "params"
  * https://www.prisma.io/docs/reference/api-reference/prisma-client-reference#params
  */
+type ModelName = "";
+
 export type MiddlewareParams = {
-  model?: string;
+  model?: ModelName;
   action: PrismaAction;
   args: any;
   dataPath: string[];
