@@ -1,7 +1,7 @@
 {
   "name": "prisma-redis-middleware",
   "main": "src/index.ts",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Prisma Middleware for caching results of queries in Redis",
   "engines": {
     "node": ">=14"
