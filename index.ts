@@ -1,4 +1,5 @@
 import Redis from "ioredis";
+import pino from 'pino';
 
 export type PrismaAction =
   | "findUnique"
@@ -42,7 +43,8 @@ export function createPrismaRedisCache({ model, cacheTime }, opts) {
     params: MiddlewareParams,
     next: (params: MiddlewareParams) => Promise<any>,
   ) {
-    const redis = new Redis({ host: opts.REDIS_HOST, port: opts.REDIS_PORT });
+    const logger = pino();
+    const redis = new Redis({ host: opts.REDIS_HOST, port: opts.REDIS_PORT, password: opts.REDIS_AUTH });
     let result;
 
     if (
@@ -54,22 +56,22 @@ export function createPrismaRedisCache({ model, cacheTime }, opts) {
       // We need to create a cache that contains enough information to cache the data correctly
       // The cache key looks like this: User_findUnique_{"where":{"email":"alice@prisma.io"}}
       const cacheKey = `${params.model}_${params.action}_${args}`;
-      console.log(cacheKey);
 
       // Try to retrieve the data from the cache first
       result = JSON.parse(await redis.get(cacheKey));
-      console.log("result found in cache", result);
+      logger.debug(`${params.action} on ${params.model} was found in the cache with key ${cacheKey}.`)
 
       if (result === null) {
         result = await next(params);
 
         // Set the cache with our query
         await redis.setex(cacheKey, cacheTime, JSON.stringify(result));
-        console.log("manually return result and update cache", result);
+        logger.debug(`${params.action} on ${params.model} was not found in the cache.`)
+        logger.debug(`Caching query ${params.action} on ${params.model} with key ${cacheKey}.`);
       }
     } else {
-      // Any Prisma action not defined will fall through to here
-      console.log("getting into the else handler", result);
+      // Any Prisma action not defined above will fall through to here
+      logger.debug(`${params.action} on ${params.model} is skipped.`)
       result = await next(params);
     }
 
