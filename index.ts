@@ -1,7 +1,5 @@
 import Redis from "ioredis";
-import debug from 'debug';
-
-debug('prisma-redis-middleware')
+import debug from "debug";
 
 export type PrismaAction =
   | "findUnique"
@@ -24,27 +22,27 @@ export type PrismaAction =
  * These options are being passed in to the middleware as "params"
  * https://www.prisma.io/docs/reference/api-reference/prisma-client-reference#params
  */
-type ModelName = "";
+// type ModelName = "";
 
-export type MiddlewareParams = {
-  model?: ModelName;
-  action: PrismaAction;
-  args: any;
-  dataPath: string[];
-  runInTransaction: boolean;
-};
+// export type MiddlewareParams = {
+//   model?: ModelName;
+//   action: PrismaAction;
+//   args: any;
+//   dataPath: string[];
+//   runInTransaction: boolean;
+// };
 
 // https://www.prisma.io/docs/reference/api-reference/prisma-client-reference#use
-export type Middleware<T = any> = (
-  params: MiddlewareParams,
-  next: (params: MiddlewareParams) => Promise<T>,
-) => Promise<T>;
+// export type Middleware<T = any> = (params: any, next: (params: any) => Promise<T>) => Promise<T>;
+
+debug("prisma-redis-middleware");
+
+function log(message: string) {
+  debug.log(`[prisma:redis:middleware][DEBUG] ${message}`);
+}
 
 export function createPrismaRedisCache({ model, cacheTime }, opts) {
-  return async function prismaCacheMiddleware(
-    params: MiddlewareParams,
-    next: (params: MiddlewareParams) => Promise<any>,
-  ) {
+  return async function prismaCacheMiddleware(params: any, next: (params: any) => Promise<any>) {
     const redis = new Redis({ host: opts.REDIS_HOST, port: opts.REDIS_PORT, password: opts.REDIS_AUTH });
     let result;
 
@@ -60,19 +58,19 @@ export function createPrismaRedisCache({ model, cacheTime }, opts) {
 
       // Try to retrieve the data from the cache first
       result = JSON.parse(await redis.get(cacheKey));
-      debug.log(`${params.action} on ${params.model} was found in the cache with key ${cacheKey}.`)
+      log(`${params.action} on ${params.model} was found in the cache with key ${cacheKey}.`);
 
       if (result === null) {
         result = await next(params);
 
         // Set the cache with our query
         await redis.setex(cacheKey, cacheTime, JSON.stringify(result));
-        debug.log(`${params.action} on ${params.model} was not found in the cache.`)
-        debug.log(`Caching query ${params.action} on ${params.model} with key ${cacheKey}.`);
+        log(`${params.action} on ${params.model} was not found in the cache.`);
+        log(`Caching action ${params.action} on ${params.model} with key ${cacheKey}.`);
       }
     } else {
       // Any Prisma action not defined above will fall through to here
-      debug.log(`${params.action} on ${params.model} is skipped.`)
+      log(`${params.action} on ${params.model} is skipped.`);
       result = await next(params);
     }
 
