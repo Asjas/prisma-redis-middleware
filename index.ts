@@ -1,6 +1,8 @@
 import Redis from "ioredis";
 import debug from 'debug';
 
+debug('prisma-redis-middleware')
+
 export type PrismaAction =
   | "findUnique"
   | "findFirst"
@@ -58,19 +60,19 @@ export function createPrismaRedisCache({ model, cacheTime }, opts) {
 
       // Try to retrieve the data from the cache first
       result = JSON.parse(await redis.get(cacheKey));
-      debug(`${params.action} on ${params.model} was found in the cache with key ${cacheKey}.`)
+      debug.log(`${params.action} on ${params.model} was found in the cache with key ${cacheKey}.`)
 
       if (result === null) {
         result = await next(params);
 
         // Set the cache with our query
         await redis.setex(cacheKey, cacheTime, JSON.stringify(result));
-        debug(`${params.action} on ${params.model} was not found in the cache.`)
-        debug(`Caching query ${params.action} on ${params.model} with key ${cacheKey}.`);
+        debug.log(`${params.action} on ${params.model} was not found in the cache.`)
+        debug.log(`Caching query ${params.action} on ${params.model} with key ${cacheKey}.`);
       }
     } else {
       // Any Prisma action not defined above will fall through to here
-      debug(`${params.action} on ${params.model} is skipped.`)
+      debug.log(`${params.action} on ${params.model} is skipped.`)
       result = await next(params);
     }
 
