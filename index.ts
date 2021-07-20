@@ -58,7 +58,10 @@ export function createPrismaRedisCache({ model, cacheTime }, opts) {
 
       // Try to retrieve the data from the cache first
       result = JSON.parse(await redis.get(cacheKey));
-      log(`${params.action} on ${params.model} was found in the cache with key ${cacheKey}.`);
+
+      if (result) {
+        log(`${params.action} on ${params.model} was found in the cache with key ${cacheKey}.`);
+      }
 
       if (result === null) {
         result = await next(params);
