@@ -1,6 +1,6 @@
 # Prisma Redis Middleware
 
-Prisma Middleware for caching of queries in Redis.
+Prisma Middleware for caching queries in Redis.
 
 Based on the work done by @abhiaiyer91 on
 [prisma-lrucache-middleware](https://github.com/abhiaiyer91/prisma-lrucache-middleware).
