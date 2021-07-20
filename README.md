@@ -17,7 +17,21 @@ Here is a list of all the queries that are currently cached in `prisma-redis-mid
 - count
 - groupBy
 
-### How to use
+## Quick Start
+
+Install the package using `npm`:
+
+```sh
+npm i prisma-redis-middleware
+```
+
+or `yarn`:
+
+```sh
+yarn add prisma-redis-middleware
+```
+
+## Code
 
 ```mjs
 import Prisma from "@prisma/client";
@@ -72,7 +86,7 @@ createPrismaMiddleware(cache, config);
 - `REDIS_PORT`: String (optional)
 - `REDIS_AUTH`: String (optional)
 
-### Debugging
+## Debugging
 
 Default: `false`
 
