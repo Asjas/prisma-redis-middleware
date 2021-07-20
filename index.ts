@@ -64,11 +64,13 @@ export function createPrismaRedisCache({ model, cacheTime }, opts) {
       }
 
       if (result === null) {
+        log(`${params.action} on ${params.model} with key ${cacheKey} was not found in the cache.`);
+        log(`Manually fetching query ${params.action} on ${params.model} from the Prisma database.`);
+
         result = await next(params);
 
         // Set the cache with our query
         await redis.setex(cacheKey, cacheTime, JSON.stringify(result));
-        log(`${params.action} on ${params.model} was not found in the cache.`);
         log(`Caching action ${params.action} on ${params.model} with key ${cacheKey}.`);
       }
     } else {
