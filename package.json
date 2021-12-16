@@ -43,7 +43,7 @@
   },
   "devDependencies": {
     "@types/debug": "4.1.7",
-    "@types/ioredis": "4.28.4",
+    "@types/ioredis": "4.28.5",
     "debug": "4.3.3",
     "eslint-config-asjas": "1.0.0",
     "ioredis": "4.28.2",
