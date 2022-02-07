@@ -1,22 +1,7 @@
 import Redis from "ioredis";
 import debug from "debug";
 
-export type PrismaAction =
-  | "findUnique"
-  | "findFirst"
-  | "findMany"
-  | "create"
-  | "createMany"
-  | "update"
-  | "updateMany"
-  | "upsert"
-  | "delete"
-  | "deleteMany"
-  | "executeRaw"
-  | "queryRaw"
-  | "aggregate"
-  | "count"
-  | "groupBy";
+export type PrismaAction = "findUnique" | "findFirst" | "findMany" | "queryRaw" | "aggregate" | "count" | "groupBy";
 
 /**
  * These options are being passed in to the middleware as "params"
@@ -46,10 +31,7 @@ export function createPrismaRedisCache({ model, cacheTime }, opts) {
     const redis = new Redis({ host: opts.REDIS_HOST, port: opts.REDIS_PORT, password: opts.REDIS_AUTH });
     let result;
 
-    if (
-      params.model === model &&
-      ["findUnique", "findFirst", "findMany", "queryRaw", "aggregate", "count", "groupBy"].includes(params.action)
-    ) {
+    if (params.model === model) {
       const args = JSON.stringify(params.args);
 
       // We need to create a cache that contains enough information to cache the data correctly
@@ -63,13 +45,14 @@ export function createPrismaRedisCache({ model, cacheTime }, opts) {
         log(`${params.action} on ${params.model} was found in the cache with key ${cacheKey}.`);
       }
 
-      if (result === null) {
+      if (result == null) {
         log(`${params.action} on ${params.model} with key ${cacheKey} was not found in the cache.`);
         log(`Manually fetching query ${params.action} on ${params.model} from the Prisma database.`);
 
+        // Fetch result from Prisma DB
         result = await next(params);
 
-        // Set the cache with our query
+        // Set the cache with our queryKey and DB result
         await redis.setex(cacheKey, cacheTime, JSON.stringify(result));
         log(`Caching action ${params.action} on ${params.model} with key ${cacheKey}.`);
       }
