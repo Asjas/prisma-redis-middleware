@@ -27,12 +27,12 @@ function log(message: string) {
 }
 
 export function createPrismaRedisCache({
-  model,
+  models,
   cacheTime,
   redis,
   excludeCacheMethods = [],
 }: {
-  model: any;
+  models: any;
   cacheTime: number;
   redis: Redis.Redis;
   excludeCacheMethods?: PrismaAction[];
@@ -52,41 +52,41 @@ export function createPrismaRedisCache({
       excludeCacheMethods.includes(cacheMethod),
     );
 
-    console.log(params);
-    console.log("excludedCacheMethods", excludedCacheMethods);
-    console.log("!excludedCacheMethods.includes(params.action)", !excludedCacheMethods.includes(params.action));
+    for (const model of models) {
+      if (model === params.model && !excludedCacheMethods.includes(params.action)) {
+        const args = JSON.stringify(params.args);
 
-    if (params.model === model && !excludedCacheMethods.includes(params.action)) {
-      const args = JSON.stringify(params.args);
+        // We need to create a cache that contains enough information to cache the data correctly
+        // The cache key looks like this: User_findUnique_{"where":{"email":"alice@prisma.io"}}
+        const cacheKey = `${params.model}_${params.action}_${args}`;
 
-      // We need to create a cache that contains enough information to cache the data correctly
-      // The cache key looks like this: User_findUnique_{"where":{"email":"alice@prisma.io"}}
-      const cacheKey = `${params.model}_${params.action}_${args}`;
+        // Try to retrieve the data from the cache first
+        result = JSON.parse(await redis.get(cacheKey));
 
-      // Try to retrieve the data from the cache first
-      result = JSON.parse(await redis.get(cacheKey));
+        if (result) {
+          log(`${params.action} on ${params.model} was found in the cache with key ${cacheKey}.`);
+        }
 
-      if (result) {
-        log(`${params.action} on ${params.model} was found in the cache with key ${cacheKey}.`);
-      }
+        if (result == null) {
+          log(`${params.action} on ${params.model} with key ${cacheKey} was not found in the cache.`);
+          log(`Manually fetching query ${params.action} on ${params.model} from the Prisma database.`);
 
-      if (result == null) {
-        log(`${params.action} on ${params.model} with key ${cacheKey} was not found in the cache.`);
-        log(`Manually fetching query ${params.action} on ${params.model} from the Prisma database.`);
+          // Fetch result from Prisma DB
+          result = await next(params);
 
-        // Fetch result from Prisma DB
+          // Set the cache with our queryKey and DB result
+          await redis.setex(cacheKey, cacheTime, JSON.stringify(result));
+          log(`Caching action ${params.action} on ${params.model} with key ${cacheKey}.`);
+        }
+      } else {
+        // Any Prisma action not defined above will fall through to here
+        log(`${params.action} on ${params.model} is skipped.`);
         result = await next(params);
-
-        // Set the cache with our queryKey and DB result
-        await redis.setex(cacheKey, cacheTime, JSON.stringify(result));
-        log(`Caching action ${params.action} on ${params.model} with key ${cacheKey}.`);
       }
-    } else {
-      // Any Prisma action not defined above will fall through to here
-      log(`${params.action} on ${params.model} is skipped.`);
-      result = await next(params);
+
+      return result;
     }
 
-    return result;
+    return null;
   };
 }
