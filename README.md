@@ -52,7 +52,7 @@ const prismaClient = new Prisma.PrismaClient();
 // First example with inline `options` being passed
 prismaClient.$use(
   createPrismaRedisCache({
-    model: [`User`, `Post`],
+    models: [`User`, `Post`],
     cacheTime: 300, // five minutes
     redis,
     excludeCacheMethods: ["aggregate", "findMany"],
@@ -61,7 +61,7 @@ prismaClient.$use(
 
 // Second example with the `options` defined as a variable
 const options = {
-  model: [`Comment`],
+  models: [`Comment`],
   cacheTime: 60 * 1000 * 30, // thirty minutes
   redis,
   excludeCacheMethods: ["findUnique"],
@@ -72,16 +72,16 @@ prismaClient.$use(createPrismaRedisCache(options));
 
 ### Options
 
-The `prisma-redis-middleware` function takes 4 arguments, `model`, `cacheTime` and `redis` are required arguments.
+The `prisma-redis-middleware` function takes 4 arguments, `models`, `cacheTime` and `redis` are required arguments.
 `excludeCacheMethods` is an optional argument.
 
 ```mjs
-createPrismaMiddleware({ model, cacheTime, redis, excludeCacheMethods });
+createPrismaMiddleware({ models, cacheTime, redis, excludeCacheMethods });
 ```
 
 #### Cache
 
-- `model`: An array of Prisma models (for example `User`, `Post`, `Comment`) (required)
+- `models`: An array of Prisma models (for example `User`, `Post`, `Comment`) (required)
 - `cacheTime`: number (milliseconds) (required)
 - `redis`: A Redis instance (required)
 - `excludeCacheMethods`: An array of Prisma Methods that should be excluded from being cached. (optional)
