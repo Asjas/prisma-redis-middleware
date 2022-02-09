@@ -7,7 +7,7 @@ Based on the work done by @abhiaiyer91 on
 
 ## Cached queries
 
-Here is a list of all the queries that are currently cached in `prisma-redis-middleware`.
+Here is a list of all the query methods that are currently cached by default in `prisma-redis-middleware`.
 
 - findUnique
 - findFirst
@@ -22,7 +22,7 @@ Here is a list of all the queries that are currently cached in `prisma-redis-mid
 Install the package using `npm`:
 
 ```sh
-npm i prisma-redis-middleware
+npm i --save-exact prisma-redis-middleware
 ```
 
 or `yarn`:
@@ -31,60 +31,60 @@ or `yarn`:
 yarn add prisma-redis-middleware
 ```
 
+You will also need to install and configure an external dependency for `Redis` (the examples show `ioredis`) if you
+don't already have a Redis Client in your project.
+
+```sh
+npm i --save-exact ioredis
+```
+
 ## Code
 
 ```mjs
 import Prisma from "@prisma/client";
 import { createPrismaRedisCache } from "prisma-redis-middleware";
+import Redis from "ioredis";
+
+const redis = new Redis(); // Uses default options for Redis connection
 
 const prismaClient = new Prisma.PrismaClient();
 
-// First example
+// First example with inline `options` being passed
 prismaClient.$use(
-  createPrismaRedisCache(
-    { model: `User`, cacheTime: 300 },
-    {
-      REDIS_HOST: "",
-      REDIS_PORT: "",
-      REDIS_AUTH: "",
-    },
-  ),
+  createPrismaRedisCache({
+    model: [`User`, `Post`],
+    cacheTime: 300, // five minutes
+    redis,
+    excludeCacheMethods: ["aggregate", "findMany"],
+  }),
 );
 
-// Second example
-const cache = {
-  model: `Post`,
+// Second example with the `options` defined as a variable
+const options = {
+  model: [`Comment`],
   cacheTime: 60 * 1000 * 30, // thirty minutes
+  redis,
+  excludeCacheMethods: ["findUnique"],
 };
 
-const config = {
-  REDIS_HOST: "",
-  REDIS_PORT: "",
-  REDIS_AUTH: "",
-};
-
-prismaClient.$use(createPrismaRedisCache(cache, config));
+prismaClient.$use(createPrismaRedisCache(options));
 ```
 
 ### Options
 
-The `prisma-redis-middleware` function takes 2 arguments, the first is a `cache` object and the second is a `config`
-object.
+The `prisma-redis-middleware` function takes 4 arguments, `model`, `cacheTime` and `redis` are required arguments.
+`excludeCacheMethods` is an optional argument.
 
 ```mjs
-createPrismaMiddleware(cache, config);
+createPrismaMiddleware({ model, cacheTime, redis, excludeCacheMethods });
 ```
 
 #### Cache
 
-- `model`: Prisma model (for example `User`, `Post`, `Comment`)
-- `cacheTime`: number (milliseconds)
-
-#### Config (optional)
-
-- `REDIS_HOST`: String (optional)
-- `REDIS_PORT`: String (optional)
-- `REDIS_AUTH`: String (optional)
+- `model`: An array of Prisma models (for example `User`, `Post`, `Comment`) (required)
+- `cacheTime`: number (milliseconds) (required)
+- `redis`: A Redis instance (required)
+- `excludeCacheMethods`: An array of Prisma Methods that should be excluded from being cached. (optional)
 
 ## Debugging
 
