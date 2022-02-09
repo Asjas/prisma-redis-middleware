@@ -48,8 +48,8 @@ export function createPrismaRedisCache({
       "count",
       "groupBy",
     ];
-    const excludedCacheMethods = defaultCacheMethods.filter(
-      (cacheMethod: PrismaAction) => !excludeCacheMethods.includes(cacheMethod),
+    const excludedCacheMethods = defaultCacheMethods.filter((cacheMethod: PrismaAction) =>
+      excludeCacheMethods.includes(cacheMethod),
     );
 
     console.log(params);
