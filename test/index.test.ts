@@ -120,3 +120,51 @@ tap.test("should exclude Prisma Action from being cached in Redis cache", async 
   // Test if the query was skipped and does not exist in cache
   equal(JSON.parse(await redis.get(cacheKey)), null);
 });
+
+tap.test("should invalidate cache after data mutation", async ({ equal }) => {
+  // Do some setup stuff
+  const dbValue = "result";
+  const model = "User";
+  const action = "findFirst";
+  const args = { where: { foo: "bar" } };
+  const cacheTime = 2000; // 2 seconds
+  const cacheKey = `${model}:${action}:${JSON.stringify(args)}`;
+  const next = () => Promise.resolve(dbValue);
+
+  const middleware = createPrismaRedisCache({
+    models: [model],
+    redis,
+    cacheTime,
+  });
+
+  // Run a "fake" User Prisma query
+  await middleware(
+    {
+      args,
+      action,
+      model,
+      dataPath: [],
+      runInTransaction: false,
+    },
+    next,
+  );
+
+  // Test if data exists in the Redis cache
+  equal(JSON.parse(await redis.get(cacheKey)), dbValue);
+
+  // Run a "fake" User Prisma mutation
+  await middleware(
+    {
+      args,
+      // @ts-expect-error
+      action: "create",
+      model,
+      dataPath: [],
+      runInTransaction: false,
+    },
+    next,
+  );
+
+  // Test if the cache was invalidated and cleared properly
+  equal(JSON.parse(await redis.get(cacheKey)), null);
+});
