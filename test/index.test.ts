@@ -11,7 +11,7 @@ tap.test("should get and set items in Redis cache", async ({ equal }) => {
   const model = "User";
   const action = "findUnique";
   const args = { where: { foo: "bar" } };
-  const cacheTime = 100; // 100ms
+  const cacheTime = 1000;
   const cacheKey = `${model}:${action}:${JSON.stringify(args)}`;
   const next = () => Promise.resolve(dbValue);
 
@@ -43,7 +43,7 @@ tap.test("should exclude Prisma Action from being cached in Redis cache", async 
   const model = "User";
   const action = "findFirst";
   const args = { where: { foo: "bar" } };
-  const cacheTime = 100; // 100ms
+  const cacheTime = 1000; // 100ms
   const cacheKey = `${model}:${action}:${JSON.stringify(args)}`;
   const next = () => Promise.resolve(dbValue);
 
