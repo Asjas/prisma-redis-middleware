@@ -5,6 +5,10 @@ import { createPrismaRedisCache } from "../";
 // Create the mock Redis instance we need
 const redis = new ioredismock();
 
+tap.afterEach(async () => {
+  await redis.flushall();
+});
+
 tap.test("should get and set a single Prisma model in Redis cache", async ({ equal }) => {
   // Do some setup stuff
   const dbValue = "result";
