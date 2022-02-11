@@ -156,7 +156,6 @@ tap.test("should invalidate cache after data mutation", async ({ equal }) => {
   await middleware(
     {
       args,
-      // @ts-expect-error
       action: "create",
       model,
       dataPath: [],

@@ -17,7 +17,7 @@ export type PrismaQueryAction =
   | "count"
   | "groupBy"
   | "queryRaw";
-export type PrismaAction = PrismaQueryAction & PrismaMutationAction;
+export type PrismaAction = PrismaMutationAction | PrismaQueryAction;
 export type RedisOptions = Redis.Redis;
 
 /**
@@ -124,9 +124,7 @@ export function createPrismaRedisCache({
   return async function prismaCacheMiddleware(params: MiddlewareParams, next: (params: any) => Promise<any>) {
     // Filter out any default cache methods specified in the params
     // so that we can have a flexible cache
-    const excludedCacheMethods = defaultCacheMethods.filter((cacheMethod: PrismaQueryAction) =>
-      excludeCacheMethods.includes(cacheMethod),
-    );
+    const excludedCacheMethods = defaultCacheMethods.filter((cacheMethod) => excludeCacheMethods.includes(cacheMethod));
 
     let result;
 
@@ -136,8 +134,8 @@ export function createPrismaRedisCache({
     // we can then retrieve it from the cache or cache it if it doesn't exist
     if (
       models.includes(params.model) &&
-      !excludedCacheMethods.includes(params.action) &&
-      !defaultMutationMethods.includes(params.action)
+      !excludedCacheMethods.includes(params.action as PrismaQueryAction) &&
+      !defaultMutationMethods.includes(params.action as PrismaMutationAction)
     ) {
       const args = JSON.stringify(params.args);
 
@@ -167,7 +165,7 @@ export function createPrismaRedisCache({
     // Invalidate all cached queries after a mutation
     // This is a basic invalidation method that invalidates
     // all queries for a particular model ie. User or Post.
-    if (defaultMutationMethods.includes(params.action)) {
+    if (defaultMutationMethods.includes(params.action as PrismaMutationAction)) {
       await invalidateCache({ model: params.model, redis, params });
     }
 
