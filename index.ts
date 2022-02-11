@@ -63,6 +63,21 @@ async function setCache({
   log(`Caching action ${params.action} on ${params.model} with key ${cacheKey}.`);
 }
 
+async function invalidateCache({
+  model,
+  redis,
+  params,
+}: {
+  model: PrismaMutationAction;
+  params: any;
+  redis: Redis.Redis;
+}) {
+  const keys = await redis.keys(`${model}:*`);
+  const deletedKeys = await redis.del(keys);
+
+  log(`${params.action} on ${params.model} caused ${deletedKeys} keys to be deleted from cache.`);
+}
+
 export function createPrismaRedisCache({
   models,
   cacheTime,
