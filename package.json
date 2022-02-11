@@ -32,7 +32,8 @@
     "build": "npm run clean && tsc",
     "clean": "rimraf dist",
     "prepack": "npm run build",
-    "test": "echo \"Error: no test specified\" && exit 0",
+    "test": "tap",
+    "test:watch": "tap -w",
     "check-types": "tsc",
     "lint": "eslint --ext .ts .",
     "lint-fix": "npm run lint -- --fix",
@@ -49,8 +50,11 @@
     "@types/debug": "4.1.7",
     "@types/ioredis": "4.28.8",
     "eslint-config-asjas": "1.0.0",
+    "ioredis-mock": "7.0.0",
     "npm-run-all": "4.1.5",
     "rimraf": "3.0.2",
+    "tap": "15.1.6",
+    "ts-node": "10.5.0",
     "typescript": "4.5.5"
   }
 }
