@@ -8,8 +8,8 @@ export type RedisOptions = Redis.Redis;
  * These options are being passed in to the middleware as "params"
  * https://www.prisma.io/docs/reference/api-reference/prisma-client-reference#params
  */
-export type MiddlewareParams<ModelType> = {
-  model?: ModelType;
+export type MiddlewareParams = {
+  model?: any;
   action: PrismaAction;
   args: any;
   dataPath: string[];
@@ -35,6 +35,34 @@ const defaultCacheMethods: PrismaAction[] = [
   "groupBy",
 ];
 
+async function getCache({ cacheKey, params, redis }: { cacheKey: string; params: any; redis: Redis.Redis }) {
+  const result = JSON.parse(await redis.get(cacheKey));
+
+  if (result) {
+    log(`${params.action} on ${params.model} was found in the cache with key ${cacheKey}.`);
+  }
+
+  return result;
+}
+
+async function setCache({
+  cacheKey,
+  cacheTime,
+  result,
+  redis,
+  params,
+}: {
+  cacheKey: string;
+  cacheTime: number;
+  result: any;
+  params: any;
+  redis: Redis.Redis;
+}) {
+  await redis.setex(cacheKey, cacheTime, JSON.stringify(result));
+
+  log(`Caching action ${params.action} on ${params.model} with key ${cacheKey}.`);
+}
+
 export function createPrismaRedisCache({
   models,
   cacheTime,
@@ -46,53 +74,44 @@ export function createPrismaRedisCache({
   redis: Redis.Redis;
   excludeCacheMethods?: PrismaAction[];
 }) {
-  return async function prismaCacheMiddleware(params: MiddlewareParams<any>, next: (params: any) => Promise<any>) {
+  return async function prismaCacheMiddleware(params: MiddlewareParams, next: (params: any) => Promise<any>) {
     // Filter out any default cache methods specified in the params
     // so that we can have a flexible cache
     const excludedCacheMethods = defaultCacheMethods.filter((cacheMethod: PrismaAction) =>
       excludeCacheMethods.includes(cacheMethod),
     );
 
-    for (const model of models) {
-      let result;
+    let result;
 
-      // If the cached model matches the Prisma model used by the Prisma query
-      // AND the cache method hasn't been excluded we can cache it
-      if (model === params.model && !excludedCacheMethods.includes(params.action)) {
-        const args = JSON.stringify(params.args);
+    // If the cached model matches the Prisma model used by the Prisma query
+    // AND the cache method hasn't been excluded we can cache it
+    if (models.includes(params.model) && !excludedCacheMethods.includes(params.action)) {
+      const args = JSON.stringify(params.args);
 
-        // We need to create a cache that contains enough information to cache the data correctly
-        // The cache key looks like this: User_findUnique_{"where":{"email":"alice@prisma.io"}}
-        const cacheKey = `${params.model}_${params.action}_${args ?? "no_args"}`;
+      // We need to create a cache that contains enough information to cache the data correctly
+      // The cache key looks like this: User_findUnique_{"where":{"email":"alice@prisma.io"}} or User_findMany
+      const cacheKey = `${params.model}:${params.action}${args ? `:${args}` : null}`;
 
-        // Try to retrieve the data from the cache first
-        result = JSON.parse(await redis.get(cacheKey));
+      // Try to retrieve the data from the cache first
+      result = await getCache({ cacheKey, params, redis });
 
-        if (result) {
-          log(`${params.action} on ${params.model} was found in the cache with key ${cacheKey}.`);
-        }
+      if (result == null) {
+        log(`${params.action} on ${params.model} with key ${cacheKey} was not found in the cache.`);
+        log(`Manually fetching query ${params.action} on ${params.model} from the Prisma database.`);
 
-        if (result == null) {
-          log(`${params.action} on ${params.model} with key ${cacheKey} was not found in the cache.`);
-          log(`Manually fetching query ${params.action} on ${params.model} from the Prisma database.`);
-
-          // Fetch result from Prisma DB
-          result = await next(params);
-
-          // Set the cache with our queryKey and DB result
-          await redis.setex(cacheKey, cacheTime, JSON.stringify(result));
-          log(`Caching action ${params.action} on ${params.model} with key ${cacheKey}.`);
-        }
-      } else {
-        // Any Prisma action not defined or excluded above will fall through to here
-        log(`${params.action} on ${params.model} is skipped.`);
+        // Fetch result from Prisma DB
         result = await next(params);
-      }
 
-      // We will either return the result from the cache or the database here
-      return result;
+        // Set the cache with our queryKey and DB result
+        await setCache({ cacheKey, cacheTime, result, redis, params });
+      }
+    } else {
+      // Any Prisma action not defined or excluded above will fall through to here
+      log(`${params.action} on ${params.model} is skipped.`);
+      result = await next(params);
     }
 
-    return null;
+    // We will either return the result from the cache or the database here
+    return result;
   };
 }
