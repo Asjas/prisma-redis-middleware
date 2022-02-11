@@ -1,7 +1,23 @@
 import Redis from "ioredis";
 import debug from "debug";
-
-export type PrismaAction = "findUnique" | "findFirst" | "findMany" | "queryRaw" | "aggregate" | "count" | "groupBy";
+export type PrismaMutationAction =
+  | "create"
+  | "createMany"
+  | "update"
+  | "updateMany"
+  | "upsert"
+  | "delete"
+  | "deleteMany"
+  | "executeRawUnsafe";
+export type PrismaQueryAction =
+  | "findFirst"
+  | "findUnique"
+  | "findMany"
+  | "aggregate"
+  | "count"
+  | "groupBy"
+  | "queryRaw";
+export type PrismaAction = PrismaQueryAction & PrismaMutationAction;
 export type RedisOptions = Redis.Redis;
 
 /**
@@ -25,7 +41,7 @@ function log(message: string) {
   debug.log(`[prisma:redis:middleware][DEBUG] ${message}`);
 }
 
-const defaultCacheMethods: PrismaAction[] = [
+const defaultCacheMethods: PrismaQueryAction[] = [
   "findUnique",
   "findFirst",
   "findMany",
@@ -33,6 +49,18 @@ const defaultCacheMethods: PrismaAction[] = [
   "aggregate",
   "count",
   "groupBy",
+];
+
+const defaultMutationMethods: PrismaMutationAction[] = [
+  "create",
+  "create",
+  "createMany",
+  "update",
+  "updateMany",
+  "upsert",
+  "delete",
+  "deleteMany",
+  "executeRawUnsafe",
 ];
 
 async function getCache({ cacheKey, params, redis }: { cacheKey: string; params: any; redis: Redis.Redis }) {
@@ -87,20 +115,26 @@ export function createPrismaRedisCache({
   models: any;
   cacheTime: number;
   redis: Redis.Redis;
-  excludeCacheMethods?: PrismaAction[];
+  excludeCacheMethods?: PrismaQueryAction[];
 }) {
   return async function prismaCacheMiddleware(params: MiddlewareParams, next: (params: any) => Promise<any>) {
     // Filter out any default cache methods specified in the params
     // so that we can have a flexible cache
-    const excludedCacheMethods = defaultCacheMethods.filter((cacheMethod: PrismaAction) =>
+    const excludedCacheMethods = defaultCacheMethods.filter((cacheMethod: PrismaQueryAction) =>
       excludeCacheMethods.includes(cacheMethod),
     );
 
     let result;
 
-    // If the cached model matches the Prisma model used by the Prisma query
-    // AND the cache method hasn't been excluded we can cache it
-    if (models.includes(params.model) && !excludedCacheMethods.includes(params.action)) {
+    // If the middleware models includes the model used in the query
+    // AND the cache method hasn't been excluded
+    // AND the Prisma action isn't a mutation action
+    // we can then retrieve it from the cache or cache it if it doesn't exist
+    if (
+      models.includes(params.model) &&
+      !excludedCacheMethods.includes(params.action) &&
+      !defaultMutationMethods.includes(params.action)
+    ) {
       const args = JSON.stringify(params.args);
 
       // We need to create a cache that contains enough information to cache the data correctly
@@ -124,6 +158,13 @@ export function createPrismaRedisCache({
       // Any Prisma action not defined or excluded above will fall through to here
       log(`${params.action} on ${params.model} is skipped.`);
       result = await next(params);
+    }
+
+    // Invalidate all cached queries after a mutation
+    // This is a basic invalidation method that invalidates
+    // all queries for a particular model ie. User or Post.
+    if (defaultMutationMethods.includes(params.action)) {
+      await invalidateCache({ model: params.model, redis, params });
     }
 
     // We will either return the result from the cache or the database here
