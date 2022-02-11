@@ -5,7 +5,7 @@ import { createPrismaRedisCache } from "../";
 // Create the mock Redis instance we need
 const redis = new ioredismock();
 
-tap.test("should get and set items in Redis cache", async ({ equal }) => {
+tap.test("should get and set a single Prisma model in Redis cache", async ({ equal }) => {
   // Do some setup stuff
   const dbValue = "result";
   const model = "User";
@@ -21,7 +21,7 @@ tap.test("should get and set items in Redis cache", async ({ equal }) => {
     cacheTime,
   });
 
-  // Run a "fake" Prisma database call
+  // Run a "fake" User Prisma query
   await middleware(
     {
       args,
@@ -35,6 +35,53 @@ tap.test("should get and set items in Redis cache", async ({ equal }) => {
 
   // Test if the data exists in the cache
   equal(JSON.parse(await redis.get(cacheKey)), dbValue);
+});
+
+tap.test("should get and set multiple Prisma models in Redis cache", async ({ equal }) => {
+  // Do some setup stuff
+  const dbValue = "result";
+  const model1 = "User";
+  const model2 = "Post";
+  const action = "findUnique";
+  const args = { where: { foo: "bar" } };
+  const cacheTime = 2000;
+  const cacheKey1 = `${model1}:${action}:${JSON.stringify(args)}`;
+  const cacheKey2 = `${model2}:${action}:${JSON.stringify(args)}`;
+  const next = () => Promise.resolve(dbValue);
+
+  const middleware = createPrismaRedisCache({
+    models: [model1, model2],
+    redis,
+    cacheTime,
+  });
+
+  // Run a "fake" User Prisma query
+  await middleware(
+    {
+      args,
+      action,
+      model: model1,
+      dataPath: [],
+      runInTransaction: false,
+    },
+    next,
+  );
+
+  // Run a "fake" Post Prisma query
+  await middleware(
+    {
+      args,
+      action,
+      model: model2,
+      dataPath: [],
+      runInTransaction: false,
+    },
+    next,
+  );
+
+  // Test if the data exists in the cache
+  equal(JSON.parse(await redis.get(cacheKey1)), dbValue);
+  equal(JSON.parse(await redis.get(cacheKey2)), dbValue);
 });
 
 tap.test("should exclude Prisma Action from being cached in Redis cache", async ({ equal }) => {
@@ -54,7 +101,7 @@ tap.test("should exclude Prisma Action from being cached in Redis cache", async 
     excludeCacheMethods: [action],
   });
 
-  // Run a "fake" Prisma database call
+  // Run a "fake" User Prisma query
   await middleware(
     {
       args,
@@ -66,6 +113,6 @@ tap.test("should exclude Prisma Action from being cached in Redis cache", async 
     next,
   );
 
-  // Test if the data does not exist in the cache
+  // Test if the query was skipped and does not exist in cache
   equal(JSON.parse(await redis.get(cacheKey)), null);
 });
