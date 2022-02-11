@@ -101,9 +101,13 @@ async function invalidateCache({
   redis: Redis.Redis;
 }) {
   const keys = await redis.keys(`${model}:*`);
-  const deletedKeys = await redis.del(keys);
 
-  log(`${params.action} on ${params.model} caused ${deletedKeys} keys to be deleted from cache.`);
+  if (keys.length) {
+    const deletedKeys = await redis.del(keys);
+    log(`${params.action} on ${params.model} caused ${deletedKeys} keys to be deleted from cache.`);
+  }
+
+  log(`No keys found in the cache to invalidate for ${params.action} on ${params.model}.`);
 }
 
 export function createPrismaRedisCache({
