@@ -46,7 +46,7 @@ don't already have a Redis Client in your project.
 npm i --save-exact ioredis
 ```
 
-## Code
+## Code Example
 
 ```js
 import Prisma from "@prisma/client";
@@ -57,25 +57,14 @@ const redis = new Redis(); // Uses default options for Redis connection
 
 const prismaClient = new Prisma.PrismaClient();
 
-// First example with inline `options` being passed
 prismaClient.$use(
   createPrismaRedisCache({
-    models: [`User`, `Post`],
+    models: ["User", "Post"],
     cacheTime: 300, // five minutes
     redis,
-    excludeCacheMethods: ["aggregate", "findMany"],
+    excludeCacheMethods: ["findMany"],
   }),
 );
-
-// Second example with the `options` defined as a variable
-const options = {
-  models: [`Comment`],
-  cacheTime: 60 * 1000 * 30, // thirty minutes
-  redis,
-  excludeCacheMethods: ["findUnique"],
-};
-
-prismaClient.$use(createPrismaRedisCache(options));
 ```
 
 ### Options
