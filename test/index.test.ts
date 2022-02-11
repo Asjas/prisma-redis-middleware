@@ -15,7 +15,7 @@ tap.test("should get and set a single Prisma model in Redis cache", async ({ equ
   const model = "User";
   const action = "findUnique";
   const args = { where: { foo: "bar" } };
-  const cacheTime = 1000;
+  const cacheTime = 2000; // 2 seconds
   const cacheKey = `${model}:${action}:${JSON.stringify(args)}`;
   const next = () => Promise.resolve(dbValue);
 
@@ -48,7 +48,7 @@ tap.test("should get and set multiple Prisma models in Redis cache", async ({ eq
   const model2 = "Post";
   const action = "findUnique";
   const args = { where: { foo: "bar" } };
-  const cacheTime = 2000;
+  const cacheTime = 2000; // 2 seconds
   const cacheKey1 = `${model1}:${action}:${JSON.stringify(args)}`;
   const cacheKey2 = `${model2}:${action}:${JSON.stringify(args)}`;
   const next = () => Promise.resolve(dbValue);
@@ -94,7 +94,7 @@ tap.test("should exclude Prisma Action from being cached in Redis cache", async 
   const model = "User";
   const action = "findFirst";
   const args = { where: { foo: "bar" } };
-  const cacheTime = 1000; // 100ms
+  const cacheTime = 2000; // 2 seconds
   const cacheKey = `${model}:${action}:${JSON.stringify(args)}`;
   const next = () => Promise.resolve(dbValue);
 
