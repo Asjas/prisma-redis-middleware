@@ -5,6 +5,12 @@ Prisma Middleware for caching queries in Redis.
 Based on the work done by @abhiaiyer91 on
 [prisma-lrucache-middleware](https://github.com/abhiaiyer91/prisma-lrucache-middleware).
 
+## Features
+
+- Basic Cache Invalidation
+- Caching multiple Prisma models
+- Excluding certain Prisma queries from being cached
+
 ## Supported Node.js versions
 
 The latest versions of the following Node.js versions are tested and supported.
@@ -105,11 +111,15 @@ If you are using a library such as `nodemon` then you can do this.
 }
 ```
 
+### [DEBUG] Query found in cache
+
 This is what the debug output should look like when a query is found in the cache.
 
 ```sh
 [prisma:redis:middleware][DEBUG] findUnique on User was found in the cache with key User:findUnique:{"where":{"id":1}}.
 ```
+
+### [DEBUG] Query not found in cache
 
 This is what the debug output should look like when a query isn't found in the cache.
 
@@ -119,9 +129,20 @@ This is what the debug output should look like when a query isn't found in the c
 [prisma:redis:middleware][DEBUG] Caching action findUnique on User with key User:findUnique:{"where":{"id":1}}.
 ```
 
+### [DEBUG] Query skipped
+
 This is what the debug output should look like when an action is skipped (ie. `Upsert`, `Delete`, etc.)
 
 ```sh
 [prisma:redis:middleware][DEBUG] upsert on User is skipped.
 [prisma:redis:middleware][DEBUG] deleteMany on Post is skipped.
+```
+
+### [DEBUG] Invalidated cache
+
+This is what the debug output should look like when an action caused the cache to be invalidated.
+
+```sh
+[prisma:redis:middleware][DEBUG] create on User caused 1 keys to be deleted from cache.
+[prisma:redis:middleware][DEBUG] deleteMany on Post caused 7 keys to be deleted from cache.
 ```
