@@ -64,10 +64,12 @@ const defaultMutationMethods: PrismaMutationAction[] = [
 ];
 
 async function getCache({ cacheKey, params, redis }: { cacheKey: string; params: any; redis: Redis.Redis }) {
-  const result = JSON.parse(await redis.get(cacheKey));
+  let result: any;
 
-  if (result) {
-    log(`${params.action} on ${params.model} was found in the cache with key ${cacheKey}.`);
+  try {
+    result = JSON.parse(await redis.get(cacheKey));
+  } catch (err) {
+    console.error(err);
   }
 
   return result;
@@ -86,9 +88,13 @@ async function setCache({
   params: any;
   redis: Redis.Redis;
 }) {
-  await redis.setex(cacheKey, cacheTime, JSON.stringify(result));
+  try {
+    await redis.setex(cacheKey, cacheTime, JSON.stringify(result));
 
-  log(`Caching action ${params.action} on ${params.model} with key ${cacheKey}.`);
+    log(`Caching action ${params.action} on ${params.model} with key ${cacheKey}.`);
+  } catch (err) {
+    console.error(err);
+  }
 }
 
 async function invalidateCache({
@@ -100,14 +106,20 @@ async function invalidateCache({
   params: any;
   redis: Redis.Redis;
 }) {
-  const keys = await redis.keys(`${model}:*`);
+  try {
+    const keys = await redis.keys(`${model}:*`);
 
-  if (keys.length) {
-    const deletedKeys = await redis.del(keys);
-    log(`${params.action} on ${params.model} caused ${deletedKeys} keys to be deleted from cache.`);
-  }
+    if (keys.length) {
+      const deletedKeys = await redis.del(keys);
+      log(`${params.action} on ${params.model} caused ${deletedKeys} keys to be deleted from cache.`);
 
   log(`No keys found in the cache to invalidate for ${params.action} on ${params.model}.`);
+    }
+
+    log(`No keys found in the cache to invalidate for ${params.action} on ${params.model}.`);
+  } catch (err) {
+    console.error(err);
+  }
 }
 
 export function createPrismaRedisCache({
