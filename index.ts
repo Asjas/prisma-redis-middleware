@@ -1,5 +1,6 @@
 import Redis from "ioredis";
 import debug from "debug";
+
 export type PrismaMutationAction =
   | "create"
   | "createMany"
@@ -113,7 +114,7 @@ async function invalidateCache({
       const deletedKeys = await redis.del(keys);
       log(`${params.action} on ${params.model} caused ${deletedKeys} keys to be deleted from cache.`);
 
-  log(`No keys found in the cache to invalidate for ${params.action} on ${params.model}.`);
+      return;
     }
 
     log(`No keys found in the cache to invalidate for ${params.action} on ${params.model}.`);
