@@ -73,6 +73,10 @@ async function getCache({ cacheKey, params, redis }: { cacheKey: string; params:
     console.error(err);
   }
 
+  if (result) {
+    log(`${params.action} on ${params.model} was found in the cache with key ${cacheKey}.`);
+  }
+
   return result;
 }
 
