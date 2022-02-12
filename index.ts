@@ -96,7 +96,7 @@ async function setCache({
   try {
     await redis.setex(cacheKey, cacheTime, JSON.stringify(result));
 
-    log(`Caching action ${params.action} on ${params.model} with key ${cacheKey}.`);
+    log(`caching ${params.action} on ${params.model} with key ${cacheKey}.`);
   } catch (err) {
     console.error(err);
   }
@@ -116,12 +116,16 @@ async function invalidateCache({
 
     if (keys.length) {
       const deletedKeys = await redis.del(keys);
-      log(`${params.action} on ${params.model} caused ${deletedKeys} keys to be deleted from cache.`);
+      log(
+        `${params.action} on ${params.model} caused ${deletedKeys} ${
+          keys.length > 1 ? "keys" : "key"
+        } to be deleted from cache.`,
+      );
 
       return;
     }
 
-    log(`No keys found in the cache to invalidate for ${params.action} on ${params.model}.`);
+    log(`${keys.length} keys found in the cache to invalidate for ${params.action} on ${params.model}.`);
   } catch (err) {
     console.error(err);
   }
@@ -165,7 +169,7 @@ export function createPrismaRedisCache({
 
       if (result == null) {
         log(`${params.action} on ${params.model} with key ${cacheKey} was not found in the cache.`);
-        log(`Manually fetching query ${params.action} on ${params.model} from the Prisma database.`);
+        log(`fetching query ${params.action} on ${params.model} from Prisma.`);
 
         // Fetch result from Prisma DB
         result = await next(params);
@@ -175,7 +179,7 @@ export function createPrismaRedisCache({
       }
     } else {
       // Any Prisma action not defined or excluded above will fall through to here
-      log(`${params.action} on ${params.model} is skipped.`);
+      log(`caching query ${params.action} on ${params.model} is skipped.`);
       result = await next(params);
     }
 
