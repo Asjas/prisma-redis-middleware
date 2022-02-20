@@ -19,9 +19,9 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node }}
-
-      - name: Install npm packages and run validation script
       - run: npm i
+
+      - name: Run validation npm script
       - run: npm run validate
 
       - name: Run the tests and generate coverage report
