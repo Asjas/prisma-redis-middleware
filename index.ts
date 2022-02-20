@@ -36,6 +36,7 @@ export type MiddlewareParams = {
 // https://www.prisma.io/docs/reference/api-reference/prisma-client-reference#use
 export type Middleware<T = any> = (params: any, next: (params: any) => Promise<T>) => Promise<T>;
 
+// eslint-disable-next-line
 debug("prisma-redis-middleware");
 
 function log(message: string) {
@@ -70,7 +71,7 @@ async function getCache({ cacheKey, params, redis }: { cacheKey: string; params:
   try {
     result = JSON.parse(await redis.get(cacheKey));
   } catch (err) {
-    console.error(err);
+    console.error(err); // eslint-disable-line no-console
   }
 
   if (result) {
@@ -98,7 +99,7 @@ async function setCache({
 
     log(`caching ${params.action} on ${params.model} with key ${cacheKey}.`);
   } catch (err) {
-    console.error(err);
+    console.error(err); // eslint-disable-line no-console
   }
 }
 
@@ -127,7 +128,7 @@ async function invalidateCache({
 
     log(`${keys.length} keys found in the cache to invalidate for ${params.action} on ${params.model}.`);
   } catch (err) {
-    console.error(err);
+    console.error(err); // eslint-disable-line no-console
   }
 }
 
