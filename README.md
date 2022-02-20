@@ -1,6 +1,12 @@
-# Prisma Redis Middleware
+# `prisma-redis-middleware`
 
-Prisma Middleware for caching queries in Redis.
+[![npm version](https://badge.fury.io/js/fastify-shopify-graphql-proxy.svg)](https://badge.fury.io/js/prisma-redis-middleware)
+[![codecov](https://codecov.io/gh/Asjas/fastify-shopify-graphql-proxy/branch/master/graph/badge.svg?token=IHWSO9MQ7B)](https://codecov.io/gh/Asjas/fastify-shopify-graphql-proxy)
+[![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE.md)
+[![Testing createPrismaRedisCache](https://github.com/Asjas/prisma-redis-middleware/actions/workflows/testing.yml/badge.svg)](https://github.com/Asjas/prisma-redis-middleware/actions/workflows/testing.yml)
+
+`Prisma Middleware` for caching queries in Redis.
 
 Based on the work done by @abhiaiyer91 on
 [prisma-lrucache-middleware](https://github.com/abhiaiyer91/prisma-lrucache-middleware).
