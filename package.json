@@ -20,6 +20,8 @@
   "keywords": [
     "prisma",
     "redis",
+    "prisma-caching",
+    "redis-caching",
     "prisma-middleware",
     "caching"
   ],
