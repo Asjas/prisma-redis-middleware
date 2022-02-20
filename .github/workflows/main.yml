@@ -22,11 +22,11 @@ jobs:
           node-version: ${{ matrix.node }}
       - run: npm i
 
-      - name: Run validation npm script
-        run: npm run validate
-
       - name: Run the tests
         run: npm test
+
+      - name: Run validation npm script
+        run: npm run validate
 
       - name: Generate coverage report
         run: npm run coverage
