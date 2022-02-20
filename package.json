@@ -35,6 +35,7 @@
     "prepack": "npm run build",
     "test": "tap",
     "test:watch": "tap -w",
+    "coverage": "npm test -- --coverage-report=lcov",
     "check-types": "tsc",
     "lint": "eslint --ext .ts .",
     "lint-fix": "npm run lint -- --fix",
