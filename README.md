@@ -1,12 +1,13 @@
 # `prisma-redis-middleware`
 
-[![npm version](https://badge.fury.io/js/fastify-shopify-graphql-proxy.svg)](https://badge.fury.io/js/prisma-redis-middleware)
-[![codecov](https://codecov.io/gh/Asjas/fastify-shopify-graphql-proxy/branch/master/graph/badge.svg?token=IHWSO9MQ7B)](https://codecov.io/gh/Asjas/fastify-shopify-graphql-proxy)
-[![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE.md)
-[![Testing createPrismaRedisCache](https://github.com/Asjas/prisma-redis-middleware/actions/workflows/testing.yml/badge.svg)](https://github.com/Asjas/prisma-redis-middleware/actions/workflows/testing.yml)
+[![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
+[![npm version](https://badge.fury.io/js/prisma-redis-middleware.svg)](https://badge.fury.io/js/prisma-redis-middleware)
+[![codecov](https://codecov.io/gh/Asjas/prisma-redis-middleware/branch/main/graph/badge.svg?token=6F6DDOSRK8)](https://codecov.io/gh/Asjas/prisma-redis-middleware)
+[![Main WorkFlow](https://github.com/Asjas/prisma-redis-middleware/actions/workflows/main.yml/badge.svg)](https://github.com/Asjas/prisma-redis-middleware/actions/workflows/main.yml)
+[![CodeQL WorkFlow](https://github.com/Asjas/prisma-redis-middleware/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/Asjas/prisma-redis-middleware/actions/workflows/codeql-analysis.yml)
 
-`Prisma Middleware` for caching queries in Redis.
+This is middleware used for caching Prisma queries in Redis.
 
 Based on the work done by @abhiaiyer91 on
 [prisma-lrucache-middleware](https://github.com/abhiaiyer91/prisma-lrucache-middleware).
