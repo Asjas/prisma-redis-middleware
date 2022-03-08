@@ -4,13 +4,13 @@ specifiers:
   '@prisma/client': 3.10.0
   '@types/ioredis': 4.28.8
   prisma: 3.10.0
-  prisma-redis-middleware: 1.1.5
+  prisma-redis-middleware: 1.1.6
   ts-node: 10.7.0
   typescript: 4.6.2
 
 dependencies:
   prisma: 3.10.0
-  prisma-redis-middleware: 1.1.5
+  prisma-redis-middleware: 1.1.6
 
 devDependencies:
   '@prisma/client': 3.10.0_prisma@3.10.0
@@ -171,8 +171,8 @@ packages:
     engines: {node: '>=6'}
     dev: false
 
-  /prisma-redis-middleware/1.1.5:
-    resolution: {integrity: sha512-/bVEWjQm4gZStwdHRdGHtstRt5qibU8sy315aOjXh1xSEA9QfQYljS8QsnVeXUzj9Av+sfx1k3SYjGo5F2ZxPQ==}
+  /prisma-redis-middleware/1.1.6:
+    resolution: {integrity: sha512-a8hsMsXRIUrj29xWxaCIA5ns9jA3Sz8O7p2KiveOgJKuUKykkpXIpPEAaLV/GnF52bWfkpHWahsP80ujt+Zhvg==}
     engines: {node: ^12.x || ^14.x || ^16.x, npm: '>= 7.x'}
     dependencies:
       debug: 4.3.3
