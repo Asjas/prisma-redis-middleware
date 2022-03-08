@@ -9,3 +9,6 @@ coverage
 
 # don't lint vscode project settings
 .vscode
+
+# don't lint example folder
+example
