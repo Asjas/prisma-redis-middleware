@@ -1,0 +1,44 @@
+{
+  "name": "prisma-redis-middleware",
+  "main": "src/index.ts",
+  "description": "Prisma Middleware for caching results of queries in Redis",
+  "engines": {
+    "node": "^12.x || ^14.x || ^16.x",
+    "npm": ">= 7.x"
+  },
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Asjas/prisma-redis-middleware.git"
+  },
+  "keywords": [
+    "prisma",
+    "redis",
+    "prisma-caching",
+    "redis-caching",
+    "prisma-middleware",
+    "caching"
+  ],
+  "author": "A-J Roos <asjas@hey.com>",
+  "license": "MIT",
+  "scripts": {
+    "build": "npm run clean && tsc",
+    "clean": "rimraf dist",
+    "start": "node dist/index.js",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate:dev": "prisma migrate dev"
+  },
+  "dependencies": {
+    "prisma": "3.10.0",
+    "prisma-redis-middleware": "1.1.5"
+  },
+  "devDependencies": {
+    "@types/ioredis": "4.28.8",
+    "@prisma/client": "3.10.0",
+    "ts-node": "10.7.0",
+    "typescript": "4.6.2"
+  }
+}
