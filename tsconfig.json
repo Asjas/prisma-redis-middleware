@@ -1,5 +1,5 @@
 {
-  "include": ["index.ts", "test/index.test.ts"],
+  "include": ["index.ts"],
   "exclude": ["node_modules"],
   "compilerOptions": {
     "outDir": "dist",
