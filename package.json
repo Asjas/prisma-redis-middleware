@@ -8,7 +8,11 @@
     "npm": ">= 7.x"
   },
   "type": "module",
-  "exports": "./dist/index.js",
+  "exports": {
+    ".": "./dist/index.js",
+    "./*": "./dist/*/index.js",
+    "./package.json": "./package.json"
+  },
   "types": "dist/index.d.ts",
   "files": [
     "dist"
