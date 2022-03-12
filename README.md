@@ -7,6 +7,8 @@
 [![Main WorkFlow](https://github.com/Asjas/prisma-redis-middleware/actions/workflows/main.yml/badge.svg)](https://github.com/Asjas/prisma-redis-middleware/actions/workflows/main.yml)
 [![CodeQL WorkFlow](https://github.com/Asjas/prisma-redis-middleware/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/Asjas/prisma-redis-middleware/actions/workflows/codeql-analysis.yml)
 
+> _Warning:_ This library is ESM only.
+
 This is middleware used for caching Prisma queries in Redis.
 
 Based on the work done by @abhiaiyer91 on
