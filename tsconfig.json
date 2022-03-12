@@ -1,6 +1,6 @@
 {
   "include": ["index.ts"],
-  "exclude": ["node_modules"],
+  "exclude": ["node_modules", "test"],
   "compilerOptions": {
     "outDir": "dist",
     "incremental": true,
