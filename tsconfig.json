@@ -1,18 +1,22 @@
 {
-  "include": ["index.ts"],
-  "exclude": ["node_modules", "test"],
+  "include": ["src", "types"],
   "compilerOptions": {
-    "outDir": "dist",
-    "incremental": true,
-    "target": "ES2021",
-    "module": "ESNext",
-    "lib": ["ESNEXT"],
-    "moduleResolution": "Node",
+    "module": "esnext",
+    "lib": ["dom", "esnext"],
+    "importHelpers": true,
     "declaration": true,
-    "pretty": true,
+    "sourceMap": true,
+    "rootDir": "./src",
+    "strict": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "moduleResolution": "node",
+    "jsx": "react",
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "allowSyntheticDefaultImports": true
+    "noEmit": true
   }
 }
