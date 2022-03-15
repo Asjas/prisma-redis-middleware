@@ -1,6 +1,6 @@
 import ioredismock from "ioredis-mock";
 import tap from "tap";
-import { createPrismaRedisCache } from "../";
+import createPrismaRedisCache from "../src/";
 
 // Create the mock Redis instance we need
 const redis = new ioredismock();
@@ -38,7 +38,7 @@ tap.test("should get and set a single Prisma model in Redis cache", async ({ equ
   );
 
   // Test if the data exists in the cache
-  equal(JSON.parse(await redis.get(cacheKey)), dbValue);
+  equal(JSON.parse((await redis.get(cacheKey)) as string), dbValue);
 });
 
 tap.test("should get and set multiple Prisma models in Redis cache", async ({ equal }) => {
@@ -84,8 +84,8 @@ tap.test("should get and set multiple Prisma models in Redis cache", async ({ eq
   );
 
   // Test if the data exists in the cache
-  equal(JSON.parse(await redis.get(cacheKey1)), dbValue);
-  equal(JSON.parse(await redis.get(cacheKey2)), dbValue);
+  equal(JSON.parse((await redis.get(cacheKey1)) as string), dbValue);
+  equal(JSON.parse((await redis.get(cacheKey2)) as string), dbValue);
 });
 
 tap.test("should exclude Prisma Action from being cached in Redis cache", async ({ equal }) => {
@@ -118,7 +118,7 @@ tap.test("should exclude Prisma Action from being cached in Redis cache", async 
   );
 
   // Test if the query was skipped and does not exist in cache
-  equal(JSON.parse(await redis.get(cacheKey)), null);
+  equal(JSON.parse((await redis.get(cacheKey)) as string), null);
 });
 
 tap.test("should invalidate cache after data mutation", async ({ equal }) => {
@@ -150,7 +150,7 @@ tap.test("should invalidate cache after data mutation", async ({ equal }) => {
   );
 
   // Test if data exists in the Redis cache
-  equal(JSON.parse(await redis.get(cacheKey)), dbValue);
+  equal(JSON.parse((await redis.get(cacheKey)) as string), dbValue);
 
   // Run a "fake" User Prisma mutation
   await middleware(
@@ -165,5 +165,5 @@ tap.test("should invalidate cache after data mutation", async ({ equal }) => {
   );
 
   // Test if the cache was invalidated and cleared properly
-  equal(JSON.parse(await redis.get(cacheKey)), null);
+  equal(JSON.parse((await redis.get(cacheKey)) as string), null);
 });
