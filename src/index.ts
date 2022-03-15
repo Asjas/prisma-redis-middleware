@@ -66,19 +66,22 @@ const defaultMutationMethods: PrismaMutationAction[] = [
 ];
 
 async function getCache({ cacheKey, params, redis }: { cacheKey: string; params: any; redis: Redis.Redis }) {
-  let result: any;
+  let result: Record<string, unknown>;
 
   try {
-    result = JSON.parse(await redis.get(cacheKey));
+    const cacheItem = await redis.get(cacheKey);
+
+    if (cacheItem) {
+      log(`${params.action} on ${params.model} was found in the cache with key ${cacheKey}.`);
+      result = JSON.parse(cacheItem);
+
+      return result;
+    }
   } catch (err) {
     console.error(err); // eslint-disable-line no-console
   }
 
-  if (result) {
-    log(`${params.action} on ${params.model} was found in the cache with key ${cacheKey}.`);
-  }
-
-  return result;
+  return null;
 }
 
 async function setCache({
@@ -148,7 +151,7 @@ export function createPrismaRedisCache({
     // so that we can have a flexible cache
     const excludedCacheMethods = defaultCacheMethods.filter((cacheMethod) => excludeCacheMethods.includes(cacheMethod));
 
-    let result;
+    let result: Record<string, unknown> | null;
 
     // If the middleware models includes the model used in the query
     // AND the cache method hasn't been excluded
