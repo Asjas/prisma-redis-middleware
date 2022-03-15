@@ -135,7 +135,7 @@ async function invalidateCache({
   }
 }
 
-export function createPrismaRedisCache({
+export default function createPrismaRedisCache({
   models,
   cacheTime,
   redis,
