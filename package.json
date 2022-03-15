@@ -1,44 +1,22 @@
 {
   "name": "prisma-redis-middleware",
-  "main": "src/index.ts",
+  "author": "A-J Roos <asjas@hey.com>",
   "version": "1.1.7",
   "description": "Prisma Middleware for caching results of queries in Redis",
-  "engines": {
-    "node": "^12.x || ^14.x || ^16.x",
-    "npm": ">= 7.x"
-  },
-  "type": "module",
-  "exports": {
-    ".": "./dist/index.js",
-    "./*": "./dist/*/index.js",
-    "./package.json": "./package.json"
-  },
-  "types": "dist/index.d.ts",
-  "files": [
-    "dist"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Asjas/prisma-redis-middleware.git"
-  },
-  "keywords": [
-    "prisma",
-    "redis",
-    "prisma-caching",
-    "redis-caching",
-    "prisma-middleware",
-    "caching"
-  ],
-  "author": "A-J Roos <asjas@hey.com>",
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/Asjas/prisma-redis-middleware/issues"
-  },
-  "homepage": "https://github.com/Asjas/prisma-redis-middleware#readme",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "type": "module",
+  "module": "dist/mylib.esm.js",
+  "files": [
+    "dist",
+    "src"
+  ],
   "scripts": {
-    "build": "npm run clean && tsc",
+    "start": "tsdx watch",
+    "build": "tsdx build",
     "clean": "rimraf dist",
-    "prepack": "npm run build",
+    "prepare": "tsdx build",
     "test": "tap",
     "test:watch": "tap -w",
     "coverage": "npm test -- --coverage-report=lcov",
@@ -48,13 +26,16 @@
     "prettier": "prettier --ignore-path .eslintignore \"**/*.+(ts)\"",
     "format": "npm run prettier -- --write",
     "check-format": "npm run prettier -- --list-different",
-    "validate": "npm-run-all --parallel check-types check-format lint build"
+    "validate": "npm-run-all --parallel check-types check-format lint build",
+    "size": "size-limit",
+    "analyze": "size-limit --why"
   },
   "dependencies": {
     "debug": "4.3.3",
     "ioredis": "4.28.5"
   },
   "devDependencies": {
+    "@size-limit/preset-small-lib": "7.0.8",
     "@types/debug": "4.1.7",
     "@types/ioredis": "4.28.8",
     "@types/ioredis-mock": "5.6.0",
@@ -66,6 +47,8 @@
     "rimraf": "3.0.2",
     "tap": "16.0.0",
     "ts-node": "10.7.0",
+    "tsdx": "0.14.1",
+    "tslib": "2.3.1",
     "typescript": "4.6.2"
   },
   "husky": {
@@ -81,5 +64,35 @@
       "prettier --write",
       "git add"
     ]
-  }
+  },
+  "size-limit": [
+    {
+      "path": "dist/mylib.cjs.production.min.js",
+      "limit": "10 KB"
+    },
+    {
+      "path": "dist/mylib.esm.js",
+      "limit": "10 KB"
+    }
+  ],
+  "engines": {
+    "node": "^12.x || ^14.x || ^16.x",
+    "npm": "^6.x || ^7.x || ^8.x"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Asjas/prisma-redis-middleware.git"
+  },
+  "keywords": [
+    "prisma",
+    "redis",
+    "prisma-caching",
+    "redis-caching",
+    "prisma-middleware",
+    "caching"
+  ],
+  "bugs": {
+    "url": "https://github.com/Asjas/prisma-redis-middleware/issues"
+  },
+  "homepage": "https://github.com/Asjas/prisma-redis-middleware#readme"
 }
