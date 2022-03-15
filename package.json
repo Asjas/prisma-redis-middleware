@@ -6,7 +6,7 @@
   "license": "MIT",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
-  "module": "dist/mylib.esm.js",
+  "module": "dist/prisma-redis-middleware.esm.js",
   "files": [
     "dist",
     "src"
