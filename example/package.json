@@ -33,7 +33,7 @@
   },
   "dependencies": {
     "prisma": "3.10.0",
-    "prisma-redis-middleware": "1.2.0"
+    "prisma-redis-middleware": "1.4.0"
   },
   "devDependencies": {
     "@types/ioredis": "4.28.8",
