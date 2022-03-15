@@ -32,12 +32,12 @@
     "prisma:migrate:dev": "prisma migrate dev"
   },
   "dependencies": {
-    "prisma": "3.10.0",
+    "prisma": "3.11.0",
     "prisma-redis-middleware": "1.4.0"
   },
   "devDependencies": {
     "@types/ioredis": "4.28.8",
-    "@prisma/client": "3.10.0",
+    "@prisma/client": "3.11.0",
     "ts-node": "10.7.0",
     "typescript": "4.6.2"
   }
