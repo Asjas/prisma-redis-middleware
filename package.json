@@ -30,7 +30,7 @@
     "analyze": "size-limit --why"
   },
   "dependencies": {
-    "debug": "4.3.3",
+    "debug": "4.3.4",
     "ioredis": "4.28.5"
   },
   "devDependencies": {
