@@ -31,12 +31,10 @@
   },
   "dependencies": {
     "debug": "4.3.3",
-    "ioredis": "4.28.5"
   },
   "devDependencies": {
     "@size-limit/preset-small-lib": "7.0.8",
     "@types/debug": "4.1.7",
-    "@types/ioredis": "4.28.8",
     "@types/tap": "15.0.6",
     "eslint-config-asjas": "1.0.0",
     "husky": "7.0.4",
