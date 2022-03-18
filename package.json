@@ -31,6 +31,7 @@
   },
   "dependencies": {
     "async-cache-dedupe": "1.2.2",
+    "mnemonist": "0.39.0",
   },
   "devDependencies": {
     "@size-limit/preset-small-lib": "7.0.8",
