@@ -1,24 +1,3 @@
-const defaultCacheMethods: PrismaQueryAction[] = [
-  "findUnique",
-  "findFirst",
-  "findMany",
-  "queryRaw",
-  "aggregate",
-  "count",
-  "groupBy",
-];
-
-const defaultMutationMethods: PrismaMutationAction[] = [
-  "create",
-  "create",
-  "createMany",
-  "update",
-  "updateMany",
-  "upsert",
-  "delete",
-  "deleteMany",
-  "executeRawUnsafe",
-];
 
 
 
