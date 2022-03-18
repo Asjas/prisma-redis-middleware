@@ -1,15 +1,13 @@
 import PrismaClient from "@prisma/client";
-import { createPrismaRedisCache, Middleware } from "prisma-redis-middleware";
+import { createPrismaRedisCache } from "../../dist/index.js";
 import Redis from "ioredis";
+
+console.log(createPrismaRedisCache);
 
 const redis = new Redis(); // Uses default options for Redis connection
 const prisma = new PrismaClient.PrismaClient();
 
-const cache: Middleware = createPrismaRedisCache({
-  models: ["User", "Post", "Profile"],
-  cacheTime: 300, // five minutes
-  redis,
-});
+const cache = createPrismaRedisCache({ storage: { type: "redis", options: { client: redis } }, defaultCacheTime: 600 });
 
 prisma.$use(cache);
 
