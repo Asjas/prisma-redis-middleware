@@ -7,6 +7,7 @@
   "rules": {
     "no-shadow": 0,
     "node/no-unpublished-import": 0,
-    "testing-library/no-debug": 0
+    "testing-library/no-debug": 0,
+    "@typescript-eslint/no-shadow": 0
   }
 }
