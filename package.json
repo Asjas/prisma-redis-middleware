@@ -30,11 +30,9 @@
     "analyze": "size-limit --why"
   },
   "dependencies": {
-    "debug": "4.3.3",
   },
   "devDependencies": {
     "@size-limit/preset-small-lib": "7.0.8",
-    "@types/debug": "4.1.7",
     "@types/tap": "15.0.6",
     "eslint-config-asjas": "1.0.0",
     "husky": "7.0.4",
