@@ -1,40 +1,6 @@
 import Redis from "ioredis";
 import debug from "debug";
 
-export type PrismaMutationAction =
-  | "create"
-  | "createMany"
-  | "update"
-  | "updateMany"
-  | "upsert"
-  | "delete"
-  | "deleteMany"
-  | "executeRawUnsafe";
-export type PrismaQueryAction =
-  | "findFirst"
-  | "findUnique"
-  | "findMany"
-  | "aggregate"
-  | "count"
-  | "groupBy"
-  | "queryRaw";
-export type PrismaAction = PrismaMutationAction | PrismaQueryAction;
-export type RedisOptions = Redis.Redis;
-
-/**
- * These options are being passed in to the middleware as "params"
- * https://www.prisma.io/docs/reference/api-reference/prisma-client-reference#params
- */
-export type MiddlewareParams = {
-  model?: any;
-  action: PrismaAction;
-  args: any;
-  dataPath: string[];
-  runInTransaction: boolean;
-};
-
-// https://www.prisma.io/docs/reference/api-reference/prisma-client-reference#use
-export type Middleware<T = any> = (params: any, next: (params: any) => Promise<T>) => Promise<T>;
 
 // eslint-disable-next-line
 debug("prisma-redis-middleware");
