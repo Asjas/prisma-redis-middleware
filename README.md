@@ -7,17 +7,19 @@
 [![Main WorkFlow](https://github.com/Asjas/prisma-redis-middleware/actions/workflows/main.yml/badge.svg)](https://github.com/Asjas/prisma-redis-middleware/actions/workflows/main.yml)
 [![CodeQL WorkFlow](https://github.com/Asjas/prisma-redis-middleware/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/Asjas/prisma-redis-middleware/actions/workflows/codeql-analysis.yml)
 
-> _Warning:_ This library is ESM only.
-
-This is middleware used for caching Prisma queries in Redis.
+This is a Prisma middleware used for caching and storing of Prisma queries in Redis (uses an in-memory LRU cache as
+fallback storage).
 
 Based on the work done by @abhiaiyer91 on
 [prisma-lrucache-middleware](https://github.com/abhiaiyer91/prisma-lrucache-middleware).
 
 ## Features
 
-- Basic Cache Invalidation
-- Caching multiple Prisma models
+- Cache Invalidation
+- Supports custom cache keys
+- Cache persistance with Redis (uses an in-memory LRU cache as fallback)
+- Caching multiple Prisma models each with a specific cache time
+- Excluding certain Prisma models from being cached
 - Excluding certain Prisma queries from being cached
 
 ## Supported Node.js versions
@@ -28,7 +30,7 @@ The latest versions of the following Node.js versions are tested and supported.
 - 14
 - 16
 
-## Cached queries
+## Default Cached queries
 
 Here is a list of all the query methods that are currently cached by default in `prisma-redis-middleware`.
 
@@ -54,14 +56,14 @@ or `yarn`:
 yarn add prisma-redis-middleware
 ```
 
-You will also need to install and configure an external dependency for `Redis` (the examples show `ioredis`) if you
-don't already have a Redis Client in your project.
+You will also need to install and configure an external dependency for `Redis` (for example: `ioredis` or similar) if
+you don't already have a Redis Client in your project.
 
 ```sh
 npm i --save-exact ioredis
 ```
 
-## Code Example
+## Code Example ESM
 
 ```js
 import Prisma from "@prisma/client";
@@ -74,10 +76,38 @@ const prismaClient = new Prisma.PrismaClient();
 
 prismaClient.$use(
   createPrismaRedisCache({
-    models: ["User", "Post"],
-    cacheTime: 300, // five minutes
-    redis,
-    excludeCacheMethods: ["findMany"],
+    models: [
+      { model: "User", cacheTime: 60, cacheKey: "userId", excludeCacheMethods: "findMany" },
+      { model: "Post", cacheTime: 180, cacheKey: "postId" },
+    ],
+    storage: { type: "redis", options: { client: redis, invalidation: true } },
+    defaultCacheKey: "id", // default is "id" field
+    defaultCacheTime: 300, // five minutes
+    defaultExcludeCacheModels: [],
+    defaultExcludeCacheMethods: ["queryRaw"],
+  }),
+);
+```
+
+## Code Example CommonJS
+
+```js
+const { PrismaClient } = require("@prisma/client");
+const { createPrismaRedisCache } = require("prisma-redis-middleware");
+const Redis = require("ioredis");
+
+const redis = new Redis(); // Uses default options for Redis connection
+
+const prismaClient = new PrismaClient();
+
+prismaClient.$use(
+  createPrismaRedisCache({
+    models: [
+      { model: "User", cacheTime: 60, cacheKey: "userId" },
+      { model: "Post", cacheTime: 180, cacheKey: "postId" },
+    ],
+    storage: { type: "memory", options: { invalidation: true } },
+    defaultCacheTime: 300, // five minutes
   }),
 );
 ```
