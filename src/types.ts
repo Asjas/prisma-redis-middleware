@@ -1,5 +1,15 @@
 import Redis from "ioredis";
 
+export type PrismaQueryAction =
+  | "findFirst"
+  | "findUnique"
+  | "findMany"
+  | "aggregate"
+  | "count"
+  | "groupBy"
+  | "findRaw"
+  | "aggregateRaw";
+
 export type PrismaMutationAction =
   | "create"
   | "createMany"
@@ -10,16 +20,7 @@ export type PrismaMutationAction =
   | "deleteMany"
   | "executeRawUnsafe";
 
-export type PrismaQueryAction =
-  | "findFirst"
-  | "findUnique"
-  | "findMany"
-  | "aggregate"
-  | "count"
-  | "groupBy"
-  | "queryRaw";
-
-export type PrismaAction = PrismaMutationAction | PrismaQueryAction;
+export type PrismaAction = PrismaQueryAction | PrismaMutationAction;
 
 /**
  * These options are being passed in to the middleware as "params"
@@ -52,12 +53,11 @@ export type CreatePrismaRedisCache = {
   models?: [
     {
       model: string;
-      primaryKey?: string;
+      cacheKey?: string;
       cacheTime?: number;
       excludeCacheMethods?: [PrismaQueryAction];
     },
   ];
-  defaultCacheTime?: number;
   storage?:
     | {
         type: "redis";
@@ -67,7 +67,9 @@ export type CreatePrismaRedisCache = {
         type: "memory";
         options?: MemoryStorageOptions;
       };
-
+  defaultCacheKey?: string;
+  defaultCacheTime?: number;
+  defaultExcludeCacheModels?: [string];
   defaultExcludeCacheMethods?: [PrismaQueryAction];
   onError?: () => void;
   onHit?: () => void;

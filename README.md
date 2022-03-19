@@ -37,10 +37,13 @@ Here is a list of all the query methods that are currently cached by default in 
 - findUnique
 - findFirst
 - findMany
-- queryRaw
-- aggregate
 - count
+- aggregate
 - groupBy
+- findRaw
+- aggregateRaw
+
+`queryRaw` is not cached as it's executed against the Prisma db itself and not a model.
 
 ## Quick Start
 
@@ -63,9 +66,9 @@ you don't already have a Redis Client in your project.
 npm i --save-exact ioredis
 ```
 
-## Code Example ESM
+## Code Example (ESM)
 
-```js
+```mjs
 import Prisma from "@prisma/client";
 import { createPrismaRedisCache } from "prisma-redis-middleware";
 import Redis from "ioredis";
@@ -81,15 +84,15 @@ prismaClient.$use(
       { model: "Post", cacheTime: 180, cacheKey: "postId" },
     ],
     storage: { type: "redis", options: { client: redis, invalidation: true } },
-    defaultCacheKey: "id", // default is "id" field
-    defaultCacheTime: 300, // five minutes
-    defaultExcludeCacheModels: [],
-    defaultExcludeCacheMethods: ["queryRaw"],
+    defaultCacheKey: "id",
+    defaultCacheTime: 300,
+    defaultExcludeCacheModels: ["Product", "Cart"],
+    defaultExcludeCacheMethods: ["count", "groupby"],
   }),
 );
 ```
 
-## Code Example CommonJS
+## Code Example (CommonJS)
 
 ```js
 const { PrismaClient } = require("@prisma/client");
@@ -107,25 +110,31 @@ prismaClient.$use(
       { model: "Post", cacheTime: 180, cacheKey: "postId" },
     ],
     storage: { type: "memory", options: { invalidation: true } },
-    defaultCacheTime: 300, // five minutes
+    defaultCacheTime: 300,
   }),
 );
 ```
 
 ### Options
 
-The `prisma-redis-middleware` function takes 4 arguments, `models`, `cacheTime` and `redis` are required arguments.
-`excludeCacheMethods` is an optional argument.
+The `prisma-redis-middleware` function takes 6 main arguments.
 
 ```mjs
-createPrismaMiddleware({ models, cacheTime, redis, excludeCacheMethods });
+createPrismaMiddleware({
+  models,
+  storage,
+  defaultCacheKey,
+  defaultCacheTime,
+  defaultExcludeCacheModels,
+  defaultExcludeCacheMethods,
+});
 ```
 
 #### Cache
 
-- `models`: An array of Prisma models (for example `User`, `Post`, `Comment`) (required)
-- `cacheTime`: number (milliseconds) (required)
-- `redis`: A Redis instance (required)
+- `models`: An array of objects (for example `User`, `Post`, `Comment`)
+- `memory`: A Redis instance (required)
+- `defaultCacheTime`: number (milliseconds) (`default: 0`)
 - `excludeCacheMethods`: An array of Prisma Methods that should be excluded from being cached. (optional)
 
 ## Debugging

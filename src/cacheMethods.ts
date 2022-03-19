@@ -4,10 +4,11 @@ export const defaultCacheMethods: PrismaQueryAction[] = [
   "findUnique",
   "findFirst",
   "findMany",
-  "queryRaw",
-  "aggregate",
   "count",
+  "aggregate",
   "groupBy",
+  "findRaw",
+  "aggregateRaw",
 ];
 
 export const defaultMutationMethods: PrismaMutationAction[] = [
