@@ -7,7 +7,19 @@ console.log(createPrismaRedisCache);
 const redis = new Redis(); // Uses default options for Redis connection
 const prisma = new PrismaClient.PrismaClient();
 
-const cache = createPrismaRedisCache({ storage: { type: "redis", options: { client: redis } }, defaultCacheTime: 600 });
+const cache = createPrismaRedisCache({
+  storage: { type: "redis", options: { client: redis, invalidation: { referencesTTL: 60 }, log: console } },
+  defaultCacheTime: 60,
+  onDedupe: (key) => {
+    console.log("deduped", key);
+  },
+  onHit: (key) => {
+    console.log("hit", key);
+  },
+  onMiss: (key) => {
+    console.log("miss", key);
+  },
+});
 
 prisma.$use(cache);
 
@@ -22,7 +34,7 @@ async function main() {
     },
   });
 
-  console.log(res1);
+  console.log("res1", res1);
 
   await prisma.user.update({ where: { email: "john@email.com" }, data: { email: "mary@email.com" } });
 
@@ -34,7 +46,7 @@ async function main() {
     },
   });
 
-  console.log(res2);
+  console.log("res2", res2);
 }
 
 main()
