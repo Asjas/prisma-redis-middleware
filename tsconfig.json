@@ -1,8 +1,8 @@
 {
   "include": ["src"],
   "compilerOptions": {
-    "module": "esnext",
-    "lib": ["esnext"],
+    "module": "Node12",
+    "lib": ["es2019"],
     "importHelpers": true,
     "declaration": true,
     "sourceMap": true,
