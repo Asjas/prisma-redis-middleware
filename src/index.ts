@@ -45,12 +45,13 @@ export const createPrismaRedisCache = ({
             model,
             {
               ttl: cacheTime || cacheOptions.ttl,
-              references: (_args: any, key: string, result: any) => {
-                return result ? [`${model}~${params.action}~${key}`] : null;
+              references: (args: any, key: string, result: any) => {
+                return result ? [`${args.model}~${key}`] : null;
               },
             },
             async (args: any) => {
               result = await next(args);
+
               return result;
             },
           );
@@ -62,12 +63,13 @@ export const createPrismaRedisCache = ({
         cache.define(
           params.model,
           {
-            references: (_args: any, key: string, result: any) => {
-              return result ? [`${params.model}~${params.action}~${key}`] : null;
+            references: (args: any, key: string, result: any) => {
+              return result ? [`${args.model}~${key}`] : null;
             },
           },
           async (args: any) => {
             result = await next(args);
+
             return result;
           },
         );
@@ -81,14 +83,15 @@ export const createPrismaRedisCache = ({
     // If the model has been excluded with `defaultExcludeCacheModels` we also ignore it
     if (!excludeCacheModels?.includes(params.model) && excludedCacheMethods?.includes(params.action)) {
       try {
-        result = await cacheFunction(params.args);
+        result = await cacheFunction(params);
       } catch (err) {
-        result = await next(params.args);
+        // If we fail to fetch it from the cache (network error, etc.) we will fetch it from the database
+        result = await next(params);
         console.error(err);
       }
     } else {
       // Get result from database for any Prisma action or model we exclude from the cache
-      result = await next(params.args);
+      result = await next(params);
       await cache.invalidateAll(`${params.model}~*`);
     }
 
