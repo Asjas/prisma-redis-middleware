@@ -1,15 +1,15 @@
 import { createCache } from "async-cache-dedupe";
-import stringify from "safe-stable-stringify";
 
-import { defaultCacheMethods, defaultMutationMethods } from "./cacheMethods";
+import { defaultCacheMethods } from "./cacheMethods";
 
-import type { CreatePrismaRedisCache, MiddlewareParams, PrismaQueryAction, PrismaMutationAction } from "./types";
+import type { CreatePrismaRedisCache, MiddlewareParams, PrismaAction } from "./types";
 
 export const createPrismaRedisCache = ({
   models,
   defaultCacheTime = 0,
   storage = { type: "memory" },
-  defaultExcludeCacheMethods,
+  excludeCacheModels = [],
+  defaultExcludeCacheMethods = [],
   onError,
   onHit,
   onMiss,
@@ -25,77 +25,73 @@ export const createPrismaRedisCache = ({
     onDedupe,
   };
 
-  // Do not filter any Prisma method specified in the defaultExcludeCacheMethods option
-  const excludedCacheMethods = defaultCacheMethods.filter((cacheMethod) =>
-    defaultExcludeCacheMethods?.includes(cacheMethod),
-  );
-
-  const cache = createCache(cacheOptions);
-
-  // Add a cache function for every model specified in the models option
-  models?.forEach(({ model, primaryKey, cacheTime }) => {
-    cache.define(
-      model,
-      {
-        ttl: cacheTime || cacheOptions.ttl,
-        references: (_args: any, _key: string, result: any) => [model, `model-${primaryKey || result.id}`],
-      },
-      (result: any) => result,
-    );
+  // Do not cache any Prisma method specified in the defaultExcludeCacheMethods option
+  const excludedCacheMethods: PrismaAction[] = defaultCacheMethods.filter((cacheMethod) => {
+    return !defaultExcludeCacheMethods.includes(cacheMethod);
   });
 
+  const cache: any = createCache(cacheOptions);
+
   return async function prismaCacheMiddleware(params: MiddlewareParams, next: (params: any) => Promise<any>) {
-    let result: Record<string, unknown> | null;
+    let result: Record<string, unknown>;
 
-    //   const cacheKey = `${params.model}:${params.action}${args ? `:${args}` : null}`;
+    // Do not cache any method that has been excluded
+    if (excludedCacheMethods?.includes(params.action)) {
+      // Add a cache function for every model specified in the models option
+      models?.forEach(({ model, cacheTime }) => {
+        // Only define the cache function if it doesn't exist yet and hasn't been excluded
+        if (!cache[model] && !excludeCacheModels?.includes(model)) {
+          cache.define(
+            model,
+            {
+              ttl: cacheTime || cacheOptions.ttl,
+              references: (_args: any, key: string, result: any) => {
+                return result ? [`${model}~${params.action}~${key}`] : null;
+              },
+            },
+            async (args: any) => {
+              result = await next(args);
+              return result;
+            },
+          );
+        }
+      });
 
-    // Cache all models by default if none are specified and does not exist yet as a cache function.
-    if (!models && !cache[params.model]) {
-      cache.define(
-        params.model,
-        {
-          references: (_args: any, _key: string, result: any) => {
-            const args = stringify(params.args);
-            console.log("inside result", result);
-            console.log([params.model, `${params.model}:${result.id}:${args}`]);
-            return [params.model, `${params.model}:${result.id}:${args}`];
+      // Add a cache function for every model that wasn't specified or excluded
+      if (!cache[params.model] && !excludeCacheModels?.includes(params.model)) {
+        cache.define(
+          params.model,
+          {
+            references: (_args: any, key: string, result: any) => {
+              return result ? [`${params.model}~${params.action}~${key}`] : null;
+            },
           },
-        },
-        (result: [Record<string, unknown>]) => result,
-      );
+          async (args: any) => {
+            result = await next(args);
+            return result;
+          },
+        );
+      }
     }
 
     // Get cache function relating to the model
     const cacheFunction = cache[params.model];
 
-    let cacheResults;
-
-    try {
-      cacheResults = await cacheFunction();
-    } catch (err) {
-      console.error(err);
-    }
-
-    console.log("cache results", cacheResults);
-
-    result = null;
-
-    result = await next(params);
-
-    if (
-      !excludedCacheMethods.includes(params.action as PrismaQueryAction) &&
-      !defaultMutationMethods.includes(params.action as PrismaMutationAction)
-    ) {
-      await cacheFunction(result);
+    // We cache the model if `models` is not provided to the middleware options
+    // If the model has been excluded with `defaultExcludeCacheModels` we also ignore it
+    if (!excludeCacheModels?.includes(params.model) && excludedCacheMethods?.includes(params.action)) {
+      try {
+        result = await cacheFunction(params.args);
+      } catch (err) {
+        result = await next(params.args);
+        console.error(err);
+      }
+    } else {
+      // Get result from database for any Prisma action or model we exclude from the cache
+      result = await next(params.args);
+      await cache.invalidateAll(`${params.model}~*`);
     }
 
     return result;
-
-    // // Invalidate all cached queries after a mutation
-    // // This is a basic invalidation method that invalidates
-    // // all queries for a particular model ie. User or Post.
-    // if (defaultMutationMethods.includes(params.action as PrismaMutationAction)) {
-    //   await cache.invalidate(result?.id);
-    // }
   };
 };
