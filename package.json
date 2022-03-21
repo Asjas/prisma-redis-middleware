@@ -4,9 +4,14 @@
   "version": "1.4.0",
   "description": "Prisma Middleware for caching results of queries in Redis",
   "license": "MIT",
-  "main": "dist/index.js",
-  "typings": "dist/index.d.ts",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "source": "./src/index.ts",
   "module": "dist/prisma-redis-middleware.esm.js",
+  "exports": {
+    "require": "./dist/index.js",
+    "default": "./dist/prisma-redis-middleware.esm.js"
+  },
   "files": [
     "dist",
     "src"
