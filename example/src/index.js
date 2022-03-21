@@ -23,10 +23,20 @@ const cache = createPrismaRedisCache({
 
 prisma.$use(cache);
 
+// prisma.$use(async (params, next) => {
+//   console.log("model", params.model);
+//   console.log("args", params.args);
+
+//   const result = await next(params);
+
+//   return result;
+// });
+
 async function main() {
   await prisma.user.create({ data: { email: "john@email.com" } });
+  await prisma.user.create({ data: { email: "mary@email.com" } });
 
-  const res1 = await prisma.user.findMany({
+  const users = await prisma.user.findMany({
     where: {
       email: {
         endsWith: "email.com",
@@ -34,19 +44,35 @@ async function main() {
     },
   });
 
-  console.log("res1", res1);
+  console.log("users", users);
 
-  await prisma.user.update({ where: { email: "john@email.com" }, data: { email: "mary@email.com" } });
+  // await prisma.user.update({ where: { email: "john@email.com" }, data: { email: "mary@email.com" } });
 
-  const res2 = await prisma.user.findMany({
-    where: {
-      email: {
-        endsWith: "email.com",
-      },
-    },
-  });
+  const count = await prisma.user.count({});
 
-  console.log("res2", res2);
+  console.log("count", count);
+
+  // const res2 = await prisma.user.findMany({
+  //   where: {
+  //     email: {
+  //       endsWith: "email.com",
+  //     },
+  //   },
+  // });
+
+  // console.log("res2", res2);
+
+  // const createMany = await prisma.user.createMany({
+  //   data: [
+  //     { name: "Bob", email: "bob@prisma.io" },
+  //     { name: "Bobo", email: "bob@prisma.io" }, // Duplicate unique key!
+  //     { name: "Yewande", email: "yewande@prisma.io" },
+  //     { name: "Angelique", email: "angelique@prisma.io" },
+  //   ],
+  //   skipDuplicates: true, // Skip 'Bobo'
+  // });
+
+  // console.log("createMany", createMany);
 }
 
 main()
