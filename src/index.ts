@@ -32,7 +32,10 @@ export const createPrismaRedisCache = ({
 
   const cache: any = createCache(cacheOptions);
 
-  return async function prismaCacheMiddleware(params: MiddlewareParams, next: (params: any) => Promise<any>) {
+  return async function prismaCacheMiddleware(
+    params: MiddlewareParams,
+    next: (params: MiddlewareParams) => Promise<any>,
+  ) {
     let result: Record<string, unknown>;
 
     // Do not cache any method that has been excluded
@@ -49,7 +52,7 @@ export const createPrismaRedisCache = ({
                 return result ? [`${args.model}~${key}`] : null;
               },
             },
-            async (args: any) => {
+            async (args: MiddlewareParams) => {
               result = await next(args);
 
               return result;
@@ -67,7 +70,7 @@ export const createPrismaRedisCache = ({
               return result ? [`${args.model}~${key}`] : null;
             },
           },
-          async (args: any) => {
+          async (args: MiddlewareParams) => {
             result = await next(args);
 
             return result;
