@@ -29,9 +29,9 @@ The latest versions of the following Node.js versions are tested and supported.
 - 14
 - 16
 
-## Default Cached queries
+## Default Cached Methods
 
-Here is a list of all the query methods that are currently cached by default in `prisma-redis-middleware`.
+Here is a list of all the Prisma methods that are currently cached by default in `prisma-redis-middleware`.
 
 - findUnique
 - findFirst
@@ -86,11 +86,10 @@ const prismaClient = new Prisma.PrismaClient();
 prismaClient.$use(
   createPrismaRedisCache({
     models: [
-      { model: "User", cacheTime: 60, cacheKey: "userId", excludeCacheMethods: "findMany" },
-      { model: "Post", cacheTime: 180, cacheKey: "postId" },
+      { model: "User", cacheTime: 60, excludeCacheMethods: "findMany" },
+      { model: "Post", cacheTime: 180, cacheKey: "article" },
     ],
     storage: { type: "redis", options: { client: redis, invalidation: { referencesTTL: 300 }, log: console } },
-    defaultCacheKey: "id",
     defaultCacheTime: 300,
     excludeCacheModels: ["Product", "Cart"],
     defaultExcludeCacheMethods: ["count", "groupby"],
@@ -102,6 +101,9 @@ prismaClient.$use(
     },
     onMiss: (key) => {
       console.log("miss", key);
+    },
+    onError: (key) => {
+      console.log("error", key);
     },
   }),
 );
@@ -134,6 +136,9 @@ prismaClient.$use(
     },
     onMiss: (key) => {
       console.log("miss", key);
+    },
+    onError: (key) => {
+      console.log("error", key);
     },
   }),
 );
