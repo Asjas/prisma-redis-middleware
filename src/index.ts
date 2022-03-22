@@ -43,10 +43,11 @@ export const createPrismaRedisCache = ({
       return next(params);
     }
 
+    // Do not cache any Prisma method that has been excluded
     if (excludedCacheMethods?.includes(params.action)) {
-      // Add a cache function for every model specified in the models option
+      // Add a cache function for each model specified in the models option
       models?.forEach(({ model, cacheTime }) => {
-        // Only define the cache function if it doesn't exist yet and hasn't been excluded
+        // Only define the cache function for a model if it doesn't exist yet and hasn't been excluded
         if (!cache[model] && !excludeCacheModels?.includes(model)) {
           cache.define(
             model,
@@ -65,7 +66,8 @@ export const createPrismaRedisCache = ({
         }
       });
 
-      // Add a cache function for every model that wasn't specified or excluded
+      // Define a cache function for any Prisma model that wasn't explicitly defined in `models`
+      // Only define the cache function for a model if it doesn't exist yet and hasn't been excluded
       if (!cache[params.model] && !excludeCacheModels?.includes(params.model)) {
         cache.define(
           params.model,
@@ -83,11 +85,10 @@ export const createPrismaRedisCache = ({
       }
     }
 
-    // Get cache function relating to the model
+    // Get the cache function relating to the Prisma model
     const cacheFunction = cache[params.model];
 
-    // We cache the model if `models` is not provided to the middleware options
-    // If the model has been excluded with `defaultExcludeCacheModels` we also ignore it
+    // Only cache the Prisma model if it hasn't been excluded and if the Prisma method wasn't excluded either
     if (!excludeCacheModels?.includes(params.model) && excludedCacheMethods?.includes(params.action)) {
       try {
         result = await cacheFunction({ cb: fetchFromPrisma, params });
@@ -101,6 +102,7 @@ export const createPrismaRedisCache = ({
       // Query the database for any Prisma method (mutation method) or Prisma model we excluded from the cache
       result = await fetchFromPrisma(params);
 
+      // If we successfully executed the query we clear and invalidate the cache for the Prisma model
       await cache.invalidateAll(`${params.model}~*`);
     }
 
