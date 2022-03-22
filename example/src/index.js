@@ -48,9 +48,17 @@ async function main() {
 
   // await prisma.user.update({ where: { email: "john@email.com" }, data: { email: "mary@email.com" } });
 
-  const count = await prisma.user.count({});
+  const count = await prisma.user.count();
 
   console.log("count", count);
+
+  // const res2 = await prisma.user.aggregate({
+  //   _count: {
+  //     _all: true,
+  //   },
+  // });
+
+  // console.log("res2: ", res2);
 
   // const res2 = await prisma.user.findMany({
   //   where: {
