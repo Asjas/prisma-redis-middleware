@@ -38,7 +38,11 @@ export const createPrismaRedisCache = ({
   ) {
     let result: Record<string, unknown>;
 
-    // Do not cache any method that has been excluded
+    // This function is used by `async-cache-dedupe` to fetch data when the cache is empty
+    async function fetchFromPrisma(params: MiddlewareParams) {
+      return next(params);
+    }
+
     if (excludedCacheMethods?.includes(params.action)) {
       // Add a cache function for every model specified in the models option
       models?.forEach(({ model, cacheTime }) => {
@@ -52,8 +56,8 @@ export const createPrismaRedisCache = ({
                 return result ? [`${args.model}~${key}`] : null;
               },
             },
-            async (args: MiddlewareParams) => {
-              result = await next(args);
+            async function modelsFetch({ cb, params }: { cb: any; params: MiddlewareParams }) {
+              result = await cb(params);
 
               return result;
             },
@@ -70,8 +74,8 @@ export const createPrismaRedisCache = ({
               return result ? [`${args.model}~${key}`] : null;
             },
           },
-          async (args: MiddlewareParams) => {
-            result = await next(args);
+          async function modelFetch({ cb, params }: { cb: any; params: MiddlewareParams }) {
+            result = await cb(params);
 
             return result;
           },
@@ -86,15 +90,17 @@ export const createPrismaRedisCache = ({
     // If the model has been excluded with `defaultExcludeCacheModels` we also ignore it
     if (!excludeCacheModels?.includes(params.model) && excludedCacheMethods?.includes(params.action)) {
       try {
-        result = await cacheFunction(params);
+        result = await cacheFunction({ cb: fetchFromPrisma, params });
       } catch (err) {
-        // If we fail to fetch it from the cache (network error, etc.) we will fetch it from the database
-        result = await next(params);
+        // If we fail to fetch it from the cache (network error, etc.) we will query it from the database
+        result = await fetchFromPrisma(params);
+
         console.error(err);
       }
     } else {
-      // Get result from database for any Prisma action or model we exclude from the cache
-      result = await next(params);
+      // Query the database for any Prisma method (mutation method) or Prisma model we excluded from the cache
+      result = await fetchFromPrisma(params);
+
       await cache.invalidateAll(`${params.model}~*`);
     }
 
