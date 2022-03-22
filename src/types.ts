@@ -22,6 +22,8 @@ export type PrismaMutationAction =
 
 export type PrismaAction = PrismaQueryAction | PrismaMutationAction;
 
+export type Result = Record<string, unknown> | Record<string, unknown>[];
+
 /**
  * These options are being passed in to the middleware as "params"
  * https://www.prisma.io/docs/reference/api-reference/prisma-client-reference#params
@@ -35,7 +37,12 @@ export type MiddlewareParams = {
 };
 
 // https://www.prisma.io/docs/reference/api-reference/prisma-client-reference#use
-export type Middleware<T = any> = (params: any, next: (params: any) => Promise<T>) => Promise<T>;
+export type Middleware<T = Result> = (
+  params: MiddlewareParams,
+  next: (params: MiddlewareParams) => Promise<T>,
+) => Promise<T>;
+
+export type FetchFromPrisma = (params: MiddlewareParams) => Promise<Result>;
 
 export type RedisMemoryOptions = {
   client: Redis.Redis;

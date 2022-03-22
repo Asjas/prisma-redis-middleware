@@ -2,7 +2,14 @@ import { createCache } from "async-cache-dedupe";
 
 import { defaultCacheMethods } from "./cacheMethods";
 
-import type { CreatePrismaRedisCache, MiddlewareParams, PrismaAction } from "./types";
+import type {
+  CreatePrismaRedisCache,
+  Middleware,
+  MiddlewareParams,
+  PrismaAction,
+  FetchFromPrisma,
+  Result,
+} from "./types";
 
 export const createPrismaRedisCache = ({
   models,
@@ -32,16 +39,13 @@ export const createPrismaRedisCache = ({
 
   const cache: any = createCache(cacheOptions);
 
-  return async function prismaCacheMiddleware(
-    params: MiddlewareParams,
-    next: (params: MiddlewareParams) => Promise<any>,
-  ) {
-    let result: Record<string, unknown>;
+  const middleware: Middleware = async (params, next) => {
+    let result: Result;
 
     // This function is used by `async-cache-dedupe` to fetch data when the cache is empty
-    async function fetchFromPrisma(params: MiddlewareParams) {
+    const fetchFromPrisma: FetchFromPrisma = async (params) => {
       return next(params);
-    }
+    };
 
     // Do not cache any Prisma method that has been excluded
     if (excludedCacheMethods?.includes(params.action)) {
@@ -53,11 +57,11 @@ export const createPrismaRedisCache = ({
             model,
             {
               ttl: cacheTime || cacheOptions.ttl,
-              references: (args: any, key: string, result: any) => {
-                return result ? [`${args.params.model}~${key}`] : null;
+              references: ({ params }: { params: MiddlewareParams }, key: string, result: Result) => {
+                return result ? [`${params.model}~${key}`] : null;
               },
             },
-            async function modelsFetch({ cb, params }: { cb: any; params: MiddlewareParams }) {
+            async function modelsFetch({ cb, params }: { cb: FetchFromPrisma; params: MiddlewareParams }) {
               result = await cb(params);
 
               return result;
@@ -72,11 +76,11 @@ export const createPrismaRedisCache = ({
         cache.define(
           params.model,
           {
-            references: (args: any, key: string, result: any) => {
-              return result ? [`${args.params.model}~${key}`] : null;
+            references: ({ params }: { params: MiddlewareParams }, key: string, result: Result) => {
+              return result ? [`${params.model}~${key}`] : null;
             },
           },
-          async function modelFetch({ cb, params }: { cb: any; params: MiddlewareParams }) {
+          async function modelFetch({ cb, params }: { cb: FetchFromPrisma; params: MiddlewareParams }) {
             result = await cb(params);
 
             return result;
@@ -88,7 +92,7 @@ export const createPrismaRedisCache = ({
     // Get the cache function relating to the Prisma model
     const cacheFunction = cache[params.model];
 
-    // Only cache the Prisma model if it hasn't been excluded and if the Prisma method wasn't excluded either
+    // Only cache the data if the Prisma model hasn't been excluded and if the Prisma method wasn't excluded either
     if (!excludeCacheModels?.includes(params.model) && excludedCacheMethods?.includes(params.action)) {
       try {
         result = await cacheFunction({ cb: fetchFromPrisma, params });
@@ -108,4 +112,6 @@ export const createPrismaRedisCache = ({
 
     return result;
   };
+
+  return middleware;
 };
