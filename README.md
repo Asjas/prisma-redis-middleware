@@ -10,6 +10,8 @@
 This is a Prisma middleware used for caching and storing of Prisma queries in Redis (uses an in-memory LRU cache as
 fallback storage).
 
+Uses [async-cache-dedupe](https://github.com/mcollina/async-cache-dedupe).
+
 ## Features
 
 - Cache Invalidation
@@ -137,26 +139,82 @@ prismaClient.$use(
 );
 ```
 
-### Options
+## API
 
-The `prisma-redis-middleware` function takes 6 main arguments.
+### `createPrismaRedisCache(opts)`
 
-```js
-createPrismaMiddleware({
-  models,
-  storage,
-  defaultCacheKey,
-  defaultCacheTime,
-  excludeCacheModels,
-  defaultExcludeCacheMethods,
-});
-```
+Options:
 
-#### Cache
+- `onDedupe`: (optional) a function that is called every time a query is deduped.
+- `onError`: (optional) a function that is called every time there is a cache error.
+- `onHit`: (optional) a function that is called every time there is a hit in the cache.
+- `onMiss`: (optional) a function that is called every time the result is not in the cache.
+- `defaultCacheTime`: (optional) (number) the default time (in ms) to use for models that don't have a `cacheTime` value
+  set. Default is 0.
+- `excludeCacheModels`: (optional) (string) an array of models to exclude from being cached.
+- `defaultExcludeCacheMethods`: (optional) (string) an array of Prisma methods to exclude from being cached for all
+  models.
+- `models`: (optional) an array of Prisma models. Models options are:
 
-- `models`: An array of objects (for example `User`, `Post`, `Comment`)
-- `memory`: A Redis instance (required)
-- `defaultCacheTime`: number (milliseconds) (`default: 0`)
-- `excludeCacheMethods`: An array of Prisma Methods that should be excluded from being cached. (optional)
+  - `model`: (required) string.
+  - `cacheKey`: (optional) string. Default is the model value.
+  - `cacheTime`: (optional) number (in ms).
+  - `excludeCacheMethods`: (optional) (string) an array of Prisma methods to exclude from being cached for this model.
+
+    Example:
+
+    ```js
+    createPrismaRedisCache({
+      models: [
+        { model: "User", cacheTime: 60 },
+        { model: "Post", cacheKey: "article", excludeCacheMethods: ["findFirst"] },
+      ],
+      defaultCacheTime: 300,
+    });
+    ```
+
+- `storage`: (optional) the storage options; default is `{ type: "memory" }`. Storage options are:
+
+  - `type`: `memory` (default) or `redis`
+  - `options`: by storage type
+
+    - for `memory` type
+
+      - `size`: (optional) maximum number of items to store in the cache. Default is `1024`.
+      - `invalidation`: (optional) enable invalidation. Default is disabled.
+      - `log`: (optional) logger instance `pino` compatible, or console, default is disabled.
+
+      Example:
+
+      ```js
+      createPrismaRedisCache({
+        storage: { type: "memory", options: { size: 2048 }, log: console },
+      });
+      ```
+
+    - for `redis` type
+
+      - `client`: a redis client instance, mandatory. Should be an `ioredis` client or compatible.
+      - `invalidation`: (optional) enable invalidation. Default is disabled.
+      - `invalidation.referencesTTL`: (optional) references TTL in seconds, it means how long the references are alive;
+        it should be set at the maximum of all the caches ttl.
+      - `log`: (optional) logger instance `pino` compatible, or console, default is disabled.
+
+      Example
+
+      ```js
+      createPrismaRedisCache({
+        storage: {
+          type: "redis",
+          options: { client: new Redis(), invalidation: { referencesTTL: 60 }, log: console },
+        },
+      });
+      ```
 
 ## Debugging
+
+You can pass functions for `onMiss`, `onHit`, `onError` and `onDedupe` to `createPrismaRedisCache` which can then be
+used to debug whether a Prisma query is being cached or not.
+
+You can also pass a custom `log` (pino or console) to the `storage` option and `async-cache-dedupe` will print debug
+info as it queries, sets, expires and invalidates the cache.
