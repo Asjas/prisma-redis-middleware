@@ -10,9 +10,6 @@
 This is a Prisma middleware used for caching and storing of Prisma queries in Redis (uses an in-memory LRU cache as
 fallback storage).
 
-Based on the work done by @abhiaiyer91 on
-[prisma-lrucache-middleware](https://github.com/abhiaiyer91/prisma-lrucache-middleware).
-
 ## Features
 
 - Cache Invalidation
@@ -20,7 +17,7 @@ Based on the work done by @abhiaiyer91 on
 - Cache persistance with Redis (uses an in-memory LRU cache as fallback)
 - Caching multiple Prisma models each with a specific cache time
 - Excluding certain Prisma models from being cached
-- Excluding certain Prisma queries from being cached
+- Excluding certain Prisma queries from being cached across all models
 
 ## Supported Node.js versions
 
@@ -43,7 +40,8 @@ Here is a list of all the query methods that are currently cached by default in 
 - findRaw
 - aggregateRaw
 
-`queryRaw` is not cached as it's executed against the Prisma db itself and not a model.
+`queryRaw` is not cached as it's executed against the Prisma db itself and not a model. This Prisma middleware is used
+for caching queries based on the models that they are executed against.
 
 ## Quick Start
 
@@ -59,14 +57,20 @@ or `yarn`:
 yarn add prisma-redis-middleware
 ```
 
-You will also need to install and configure an external dependency for `Redis` (for example: `ioredis` or similar) if
-you don't already have a Redis Client in your project.
+or `pnpm`:
+
+```sh
+pnpm add prisma-redis-middleware
+```
+
+_You will also need to install and configure an external dependency for `Redis` (for example: `ioredis` or one that uses
+a similar API) if you don't already have a Redis Client in your project._
 
 ```sh
 npm i --save-exact ioredis
 ```
 
-## Code Example (ESM)
+## Code Example (ESM / Import)
 
 ```mjs
 import Prisma from "@prisma/client";
@@ -83,16 +87,25 @@ prismaClient.$use(
       { model: "User", cacheTime: 60, cacheKey: "userId", excludeCacheMethods: "findMany" },
       { model: "Post", cacheTime: 180, cacheKey: "postId" },
     ],
-    storage: { type: "redis", options: { client: redis, invalidation: true } },
+    storage: { type: "redis", options: { client: redis, invalidation: { referencesTTL: 300 }, log: console } },
     defaultCacheKey: "id",
     defaultCacheTime: 300,
-    defaultExcludeCacheModels: ["Product", "Cart"],
+    excludeCacheModels: ["Product", "Cart"],
     defaultExcludeCacheMethods: ["count", "groupby"],
+    onDedupe: (key) => {
+      console.log("deduped", key);
+    },
+    onHit: (key) => {
+      console.log("hit", key);
+    },
+    onMiss: (key) => {
+      console.log("miss", key);
+    },
   }),
 );
 ```
 
-## Code Example (CommonJS)
+## Code Example (Common JS / Require)
 
 ```js
 const { PrismaClient } = require("@prisma/client");
@@ -109,8 +122,17 @@ prismaClient.$use(
       { model: "User", cacheTime: 60, cacheKey: "userId" },
       { model: "Post", cacheTime: 180, cacheKey: "postId" },
     ],
-    storage: { type: "memory", options: { invalidation: true } },
+    storage: { type: "memory", options: { invalidation: true, log: console } },
     defaultCacheTime: 300,
+    onDedupe: (key) => {
+      console.log("deduped", key);
+    },
+    onHit: (key) => {
+      console.log("hit", key);
+    },
+    onMiss: (key) => {
+      console.log("miss", key);
+    },
   }),
 );
 ```
@@ -119,13 +141,13 @@ prismaClient.$use(
 
 The `prisma-redis-middleware` function takes 6 main arguments.
 
-```mjs
+```js
 createPrismaMiddleware({
   models,
   storage,
   defaultCacheKey,
   defaultCacheTime,
-  defaultExcludeCacheModels,
+  excludeCacheModels,
   defaultExcludeCacheMethods,
 });
 ```
@@ -138,59 +160,3 @@ createPrismaMiddleware({
 - `excludeCacheMethods`: An array of Prisma Methods that should be excluded from being cached. (optional)
 
 ## Debugging
-
-Default: `false`
-
-You may turn on logging to help debug why certain Prisma queries are not being cached as you may expect.
-
-If you are using the `Node.js` binary directly you can do this.
-
-```json
-"scripts": {
-  "debug:dev": "DEBUG=prisma-redis-middleware node index.js",
-}
-```
-
-If you are using a library such as `nodemon` then you can do this.
-
-```json
-"scripts": {
-  "debug:dev": "DEBUG=prisma-redis-middleware nodemon index.js",
-}
-```
-
-### [DEBUG] Query found in cache
-
-This is what the debug output should look like when a query is found in the cache.
-
-```sh
-[prisma:redis:middleware][DEBUG] findUnique on User was found in the cache with key User:findUnique:{"where":{"id":1}}.
-```
-
-### [DEBUG] Query not found in cache
-
-This is what the debug output should look like when a query isn't found in the cache.
-
-```sh
-[prisma:redis:middleware][DEBUG] findUnique on User with key User:findUnique:{"where":{"id":1}} was not found in the cache.
-[prisma:redis:middleware][DEBUG] Manually fetching query findUnique on User from the Prisma database.
-[prisma:redis:middleware][DEBUG] Caching action findUnique on User with key User:findUnique:{"where":{"id":1}}.
-```
-
-### [DEBUG] Query skipped
-
-This is what the debug output should look like when an action is skipped (ie. `Upsert`, `Delete`, etc.)
-
-```sh
-[prisma:redis:middleware][DEBUG] upsert on User is skipped.
-[prisma:redis:middleware][DEBUG] deleteMany on Post is skipped.
-```
-
-### [DEBUG] Invalidated cache
-
-This is what the debug output should look like when an action caused the cache to be invalidated.
-
-```sh
-[prisma:redis:middleware][DEBUG] create on User caused 1 keys to be deleted from cache.
-[prisma:redis:middleware][DEBUG] deleteMany on Post caused 7 keys to be deleted from cache.
-```
