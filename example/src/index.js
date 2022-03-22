@@ -8,6 +8,7 @@ const redis = new Redis(); // Uses default options for Redis connection
 const prisma = new PrismaClient.PrismaClient();
 
 const cache = createPrismaRedisCache({
+  models: [{ model: "User", cacheKey: "customUserKey" }],
   storage: { type: "redis", options: { client: redis, invalidation: { referencesTTL: 60 }, log: console } },
   defaultCacheTime: 60,
   onDedupe: (key) => {
