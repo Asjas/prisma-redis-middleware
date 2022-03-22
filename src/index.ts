@@ -50,7 +50,7 @@ export const createPrismaRedisCache = ({
     // Do not cache any Prisma method that has been excluded
     if (excludedCacheMethods?.includes(params.action)) {
       // Add a cache function for each model specified in the models option
-      models?.forEach(({ model, cacheTime }) => {
+      models?.forEach(({ model, cacheTime, cacheKey }) => {
         // Only define the cache function for a model if it doesn't exist yet and hasn't been excluded
         if (!cache[model] && !excludeCacheModels?.includes(model)) {
           cache.define(
@@ -58,7 +58,7 @@ export const createPrismaRedisCache = ({
             {
               ttl: cacheTime || cacheOptions.ttl,
               references: ({ params }: { params: MiddlewareParams }, key: string, result: Result) => {
-                return result ? [`${params.model}~${key}`] : null;
+                return result ? [`${cacheKey || params.model}~${key}`] : null;
               },
             },
             async function modelsFetch({ cb, params }: { cb: FetchFromPrisma; params: MiddlewareParams }) {
