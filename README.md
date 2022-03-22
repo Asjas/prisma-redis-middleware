@@ -123,8 +123,8 @@ const prismaClient = new PrismaClient();
 prismaClient.$use(
   createPrismaRedisCache({
     models: [
-      { model: "User", cacheTime: 60, cacheKey: "userId" },
-      { model: "Post", cacheTime: 180, cacheKey: "postId" },
+      { model: "User", cacheTime: 60 },
+      { model: "Post", cacheTime: 180 },
     ],
     storage: { type: "memory", options: { invalidation: true, log: console } },
     defaultCacheTime: 300,
@@ -187,7 +187,7 @@ Options:
 
       - `size`: (optional) maximum number of items to store in the cache. Default is `1024`.
       - `invalidation`: (optional) enable invalidation. Default is disabled.
-      - `log`: (optional) logger instance `pino` compatible, or console, default is disabled.
+      - `log`: (optional) logger instance `pino` compatible, or `console`, default is disabled.
 
       Example:
 
@@ -203,7 +203,7 @@ Options:
       - `invalidation`: (optional) enable invalidation. Default is disabled.
       - `invalidation.referencesTTL`: (optional) references TTL in seconds, it means how long the references are alive;
         it should be set at the maximum of all the caches ttl.
-      - `log`: (optional) logger instance `pino` compatible, or console, default is disabled.
+      - `log`: (optional) logger instance `pino` compatible, or `console`, default is disabled.
 
       Example
 
@@ -222,4 +222,5 @@ You can pass functions for `onMiss`, `onHit`, `onError` and `onDedupe` to `creat
 used to debug whether a Prisma query is being cached or not.
 
 You can also pass a custom `log` (pino or console) to the `storage` option and `async-cache-dedupe` will print debug
-info as it queries, sets, expires and invalidates the cache.
+info as it queries, sets, expires and invalidates the cache. Note that the `log` option can print out very verbose
+output.

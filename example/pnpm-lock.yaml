@@ -7,14 +7,14 @@ specifiers:
   ioredis: 4.28.5
   nodemon: 2.0.15
   prisma: 3.11.0
-  prisma-redis-middleware: 1.4.0
+  prisma-redis-middleware: 2.0.0-3
   ts-node: 10.7.0
   typescript: 4.6.2
 
 dependencies:
   ioredis: 4.28.5
   prisma: 3.11.0
-  prisma-redis-middleware: 1.4.0
+  prisma-redis-middleware: 2.0.0-3
 
 devDependencies:
   '@prisma/client': 3.11.0_prisma@3.11.0
@@ -103,6 +103,10 @@ packages:
     resolution: {integrity: sha512-nne9/IiQ/hzIhY6pdDnbBtz7DjPTKrY00P/zvPSm5pOFkl6xuGrGnXn/VtTNNfNtAfZ9/1RtehkszU9qcTii0Q==}
     dev: true
 
+  /abstract-logging/2.0.1:
+    resolution: {integrity: sha512-2BjRTZxTPvheOvGbBslFSYOUkr+SjPtOnrLP33f+VIWLzezQpZcqVg7ja3L4dBXmzzgwT+a029jRx5PCi3JuiA==}
+    dev: false
+
   /acorn-walk/8.2.0:
     resolution: {integrity: sha512-k+iyHEuPgSw6SbuDpGQM+06HQUa04DZ3o+F6CSzXMvvI5KMvnaEqXe+YVe555R9nn6GPt404fos4wcgpw12SDA==}
     engines: {node: '>=0.4.0'}
@@ -143,6 +147,14 @@ packages:
   /arg/4.1.3:
     resolution: {integrity: sha512-58S9QDqG0Xx27YwPSt9fJxivjYl432YCwfDMfZ+71RAqUrZef7LrKQZ3LHLOwCS4FLNBplP533Zx895SeOCHvA==}
     dev: true
+
+  /async-cache-dedupe/1.2.2:
+    resolution: {integrity: sha512-mHKfjcNEcBoq+tJJYK21yLKXX8+KxnVUfc/Brko3CNXRyZcBLarmcLqdt99z6Olk1pbCSFR6wGxn67FY+g3bQw==}
+    dependencies:
+      abstract-logging: 2.0.1
+      mnemonist: 0.39.0
+      safe-stable-stringify: 2.3.1
+    dev: false
 
   /balanced-match/1.0.2:
     resolution: {integrity: sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==}
@@ -283,18 +295,6 @@ packages:
     dependencies:
       ms: 2.1.3
     dev: true
-
-  /debug/4.3.3:
-    resolution: {integrity: sha512-/zxw5+vh1Tfv+4Qn7a5nsbcJKPaSvCDhojn6FEl9vupwK2VCSDtEiEtqr8DFtzYFOdz63LBkxec7DYuc2jon6Q==}
-    engines: {node: '>=6.0'}
-    peerDependencies:
-      supports-color: '*'
-    peerDependenciesMeta:
-      supports-color:
-        optional: true
-    dependencies:
-      ms: 2.1.2
-    dev: false
 
   /debug/4.3.4:
     resolution: {integrity: sha512-PRWFHuSU3eDtQJPvnNY7Jcket1j0t5OuOsFzPPzsekD52Zl8qUfFIPEiswXqIvHWGVHOgX+7G/vCNNhehwxfkQ==}
@@ -624,6 +624,12 @@ packages:
     resolution: {integrity: sha512-Jsjnk4bw3YJqYzbdyBiNsPWHPfO++UGG749Cxs6peCu5Xg4nrena6OVxOYxrQTqww0Jmwt+Ref8rggumkTLz9Q==}
     dev: true
 
+  /mnemonist/0.39.0:
+    resolution: {integrity: sha512-7v08Ldk1lnlywnIShqfKYN7EW4WKLUnkoWApdmR47N1xA2xmEtWERfEvyRCepbuFCETG5OnfaGQpp/p4Bus6ZQ==}
+    dependencies:
+      obliterator: 2.0.2
+    dev: false
+
   /ms/2.1.2:
     resolution: {integrity: sha512-sGkPx+VjMtmA6MX27oA4FBFELFCZZ4S4XqeGOXCv68tT+jb3vk/RyaKWP0PTKyWtmLSM0b+adUTEvbs1PEaH2w==}
     dev: false
@@ -667,6 +673,10 @@ packages:
     engines: {node: '>=8'}
     dev: true
 
+  /obliterator/2.0.2:
+    resolution: {integrity: sha512-g0TrA7SbUggROhDPK8cEu/qpItwH2LSKcNl4tlfBNT54XY+nOsqrs0Q68h1V9b3HOSpIWv15jb1lax2hAggdIg==}
+    dev: false
+
   /once/1.4.0:
     resolution: {integrity: sha1-WDsap3WWHUsROsF9nFC6753Xa9E=}
     dependencies:
@@ -703,12 +713,13 @@ packages:
     engines: {node: '>=4'}
     dev: true
 
-  /prisma-redis-middleware/1.4.0:
-    resolution: {integrity: sha512-qyA4dwfrFCSkXw0bHdrWSsHGnNjn7mExj3PFt5WvlBvtCcNpyCjyAvPoOqA1xvTi4BXDDwcVbGJhnXvuu0v/OQ==}
+  /prisma-redis-middleware/2.0.0-3:
+    resolution: {integrity: sha512-b/nPFsQ+BCrq5txcF0nWEnbxNuNTrY75IDy7sbRz+f98LUpIpLLDIKY/qtTp1OfA3JiBjWn5X/2DLFQor+qSoQ==}
     engines: {node: ^12.x || ^14.x || ^16.x, npm: ^6.x || ^7.x || ^8.x}
     dependencies:
-      debug: 4.3.3
+      async-cache-dedupe: 1.2.2
       ioredis: 4.28.5
+      mnemonist: 0.39.0
     transitivePeerDependencies:
       - supports-color
     dev: false
@@ -792,6 +803,11 @@ packages:
     dependencies:
       lowercase-keys: 1.0.1
     dev: true
+
+  /safe-stable-stringify/2.3.1:
+    resolution: {integrity: sha512-kYBSfT+troD9cDA85VDnHZ1rpHC50O0g1e6WlGHVCz/g+JS+9WKLj+XwFYyR8UbrZN8ll9HUpDAAddY58MGisg==}
+    engines: {node: '>=10'}
+    dev: false
 
   /semver-diff/3.1.1:
     resolution: {integrity: sha512-GX0Ix/CJcHyB8c4ykpHGIAvLyOwOobtM/8d+TQkAd81/bEjgPHrfba41Vpesr7jX/t8Uh+R3EX9eAS5be+jQYg==}
