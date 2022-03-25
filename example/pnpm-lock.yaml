@@ -1,23 +1,23 @@
 lockfileVersion: 5.3
 
 specifiers:
-  '@prisma/client': 3.11.0
+  '@prisma/client': 3.11.1
   '@types/ioredis': 4.28.10
   '@types/node': 17.0.22
   ioredis: 4.28.5
   nodemon: 2.0.15
-  prisma: 3.11.0
+  prisma: 3.11.1
   prisma-redis-middleware: 2.0.0-3
   ts-node: 10.7.0
   typescript: 4.6.3
 
 dependencies:
   ioredis: 4.28.5
-  prisma: 3.11.0
+  prisma: 3.11.1
   prisma-redis-middleware: 2.0.0-3
 
 devDependencies:
-  '@prisma/client': 3.11.0_prisma@3.11.0
+  '@prisma/client': 3.11.1_prisma@3.11.1
   '@types/ioredis': 4.28.10
   '@types/node': 17.0.22
   nodemon: 2.0.15
@@ -38,8 +38,8 @@ packages:
       '@cspotcode/source-map-consumer': 0.8.0
     dev: true
 
-  /@prisma/client/3.11.0_prisma@3.11.0:
-    resolution: {integrity: sha512-d42o/tlalaWMmNOR4r5BiR6YYTYEV82eZ2lNKOm5ht3WyYwI9e+zy2MyZnNO4Fx5e08RAhW+GRVcEgKl5faUaQ==}
+  /@prisma/client/3.11.1_prisma@3.11.1:
+    resolution: {integrity: sha512-B3C7zQG4HbjJzUr2Zg9UVkBJutbqq9/uqkl1S138+keZCubJrwizx3RuIvGwI+s+pm3qbsyNqXiZgL3Ir0fSng==}
     engines: {node: '>=12.6'}
     requiresBuild: true
     peerDependencies:
@@ -48,16 +48,16 @@ packages:
       prisma:
         optional: true
     dependencies:
-      '@prisma/engines-version': 3.11.0-48.b371888aaf8f51357c7457d836b86d12da91658b
-      prisma: 3.11.0
+      '@prisma/engines-version': 3.11.1-1.1a2506facaf1a4727b7c26850735e88ec779dee9
+      prisma: 3.11.1
     dev: true
 
-  /@prisma/engines-version/3.11.0-48.b371888aaf8f51357c7457d836b86d12da91658b:
-    resolution: {integrity: sha512-bhMW1XybXZyqCf+9QqjP7Oi7xgVHcISVyOZNMm51qeZsy12M1RtHaCcXUFeMMV0JOCZZuPFVr3+0KVpQqK35CQ==}
+  /@prisma/engines-version/3.11.1-1.1a2506facaf1a4727b7c26850735e88ec779dee9:
+    resolution: {integrity: sha512-HkcsDniA4iNb/gi0iuyOJNAM7nD/LwQ0uJm15v360O5dee3TM4lWdSQiTYBMK6FF68ACUItmzSur7oYuUZ2zkQ==}
     dev: true
 
-  /@prisma/engines/3.11.0-48.b371888aaf8f51357c7457d836b86d12da91658b:
-    resolution: {integrity: sha512-m9iZd5F5vP6A2IvKWfHpOO/qK8OOO9nbsV/pdyEkF/1WNe0E8SIWFBKb+HcMLkG9OFbDDBy8QItXmp/mIULuwQ==}
+  /@prisma/engines/3.11.1-1.1a2506facaf1a4727b7c26850735e88ec779dee9:
+    resolution: {integrity: sha512-MILbsGnvmnhCbFGa2/iSnsyGyazU3afzD7ldjCIeLIGKkNBMSZgA2IvpYsAXl+6qFHKGrS3B2otKfV31dwMSQw==}
     requiresBuild: true
     dev: false
 
@@ -724,13 +724,13 @@ packages:
       - supports-color
     dev: false
 
-  /prisma/3.11.0:
-    resolution: {integrity: sha512-8SdsLPhKR3mOfoo2o73h9mNn3v5kA/RqGA26Sv6qDS78Eh2uepPqt5e8/nwj5EOblYm5HEGuitaXQrOCLb6uTw==}
+  /prisma/3.11.1:
+    resolution: {integrity: sha512-aYn8bQwt1xwR2oSsVNHT4PXU7EhsThIwmpNB/MNUaaMx5OPLTro6VdNJe/sJssXFLxhamfWeMjwmpXjljo6xkg==}
     engines: {node: '>=12.6'}
     hasBin: true
     requiresBuild: true
     dependencies:
-      '@prisma/engines': 3.11.0-48.b371888aaf8f51357c7457d836b86d12da91658b
+      '@prisma/engines': 3.11.1-1.1a2506facaf1a4727b7c26850735e88ec779dee9
     dev: false
 
   /pstree.remy/1.1.8:
