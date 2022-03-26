@@ -4,7 +4,7 @@ specifiers:
   '@prisma/client': 3.11.1
   '@types/ioredis': 4.28.10
   '@types/node': 17.0.22
-  ioredis: 4.28.5
+  ioredis: 5.0.1
   nodemon: 2.0.15
   prisma: 3.11.1
   prisma-redis-middleware: 2.0.0-3
@@ -12,7 +12,7 @@ specifiers:
   typescript: 4.6.3
 
 dependencies:
-  ioredis: 4.28.5
+  ioredis: 5.0.1
   prisma: 3.11.1
   prisma-redis-middleware: 2.0.0-3
 
@@ -37,6 +37,10 @@ packages:
     dependencies:
       '@cspotcode/source-map-consumer': 0.8.0
     dev: true
+
+  /@ioredis/commands/1.1.1:
+    resolution: {integrity: sha512-fsR4P/ROllzf/7lXYyElUJCheWdTJVJvOTps8v9IWKFATxR61ANOlnoPqhH099xYLrJGpc2ZQ28B3rMeUt5VQg==}
+    dev: false
 
   /@prisma/client/3.11.1_prisma@3.11.1:
     resolution: {integrity: sha512-B3C7zQG4HbjJzUr2Zg9UVkBJutbqq9/uqkl1S138+keZCubJrwizx3RuIvGwI+s+pm3qbsyNqXiZgL3Ir0fSng==}
@@ -329,6 +333,11 @@ packages:
     engines: {node: '>=0.10'}
     dev: false
 
+  /denque/2.0.1:
+    resolution: {integrity: sha512-tfiWc6BQLXNLpNiR5iGd0Ocu3P3VpxfzFiqubLgMfhfOw9WyvgJBd46CClNn9k3qfbjvT//0cf7AlYRX/OslMQ==}
+    engines: {node: '>=0.10'}
+    dev: false
+
   /diff/4.0.2:
     resolution: {integrity: sha512-58lmxKSA4BNyLz+HHMUzlOEpg09FV+ev6ZMe3vJihgdxzgcwZ8VoEEPmALCZG9LmqfVoNMMKpttIYTVG6uDY7A==}
     engines: {node: '>=0.3.1'}
@@ -478,6 +487,23 @@ packages:
       lodash.isarguments: 3.1.0
       p-map: 2.1.0
       redis-commands: 1.7.0
+      redis-errors: 1.2.0
+      redis-parser: 3.0.0
+      standard-as-callback: 2.1.0
+    transitivePeerDependencies:
+      - supports-color
+    dev: false
+
+  /ioredis/5.0.1:
+    resolution: {integrity: sha512-/5MF5vnUQf1o3+sy/pnkce5K8zdSMTcTgpRUW5oGGT+mEsgd1r7YLRPZ+zWGb9hbZXE3BJCgphc2eESm+2d9KA==}
+    engines: {node: '>=12.22.0'}
+    dependencies:
+      '@ioredis/commands': 1.1.1
+      cluster-key-slot: 1.1.0
+      debug: 4.3.4
+      denque: 2.0.1
+      lodash.defaults: 4.2.0
+      lodash.isarguments: 3.1.0
       redis-errors: 1.2.0
       redis-parser: 3.0.0
       standard-as-callback: 2.1.0
