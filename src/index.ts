@@ -1,35 +1,37 @@
+import type {
+  CreatePrismaRedisCache,
+  FetchFromPrisma,
+  Middleware,
+  MiddlewareParams,
+  PrismaAction,
+  Result,
+} from "./types";
+
 import { createCache } from "async-cache-dedupe";
 
 import { defaultCacheMethods } from "./cacheMethods";
 
-import type {
-  CreatePrismaRedisCache,
-  Middleware,
-  MiddlewareParams,
-  PrismaAction,
-  FetchFromPrisma,
-  Result,
-} from "./types";
+const DEFAULT_CACHE_TIME = 0;
 
 export const createPrismaRedisCache = ({
   models,
-  defaultCacheTime = 0,
-  storage = { type: "memory" },
-  excludeCacheModels = [],
-  defaultExcludeCacheMethods = [],
+  onDedupe,
   onError,
   onHit,
   onMiss,
-  onDedupe,
+  defaultCacheTime = DEFAULT_CACHE_TIME,
+  defaultExcludeCacheMethods = [],
+  excludeCacheModels = [],
+  storage = { type: "memory" },
 }: CreatePrismaRedisCache) => {
   // Default options for "async-cache-dedupe"
   const cacheOptions = {
-    ttl: defaultCacheTime,
-    storage,
+    onDedupe,
     onError,
     onHit,
     onMiss,
-    onDedupe,
+    storage,
+    ttl: defaultCacheTime,
   };
 
   // Do not cache any Prisma method specified in the defaultExcludeCacheMethods option
@@ -56,10 +58,10 @@ export const createPrismaRedisCache = ({
           cache.define(
             model,
             {
-              ttl: cacheTime || cacheOptions.ttl,
               references: ({ params }: { params: MiddlewareParams }, key: string, result: Result) => {
                 return result ? [`${cacheKey || params.model}~${key}`] : null;
               },
+              ttl: cacheTime || cacheOptions.ttl,
             },
             async function modelsFetch({ cb, params }: { cb: FetchFromPrisma; params: MiddlewareParams }) {
               result = await cb(params);
