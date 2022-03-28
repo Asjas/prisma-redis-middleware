@@ -9,11 +9,9 @@ import type Redis from "ioredis";
 const mockRedis: unknown = new MockRedis();
 const redis = mockRedis as Redis;
 
-tap.afterEach(async () => {
+afterEach(async () => {
   await redis.flushall();
 });
-
-// function createMockQuery({ args, action, model, datapath, runInTransaction }) {}
 
 tap.test("should get and set a single Prisma model in Redis cache", async ({ equal }) => {
   // Do some setup stuff
