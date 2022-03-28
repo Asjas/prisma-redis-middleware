@@ -192,6 +192,7 @@ test("excludeCacheMethods excludes the Prisma Action from being cached", async (
 });
 
 test("excludeCacheMethods excludes Prisma Action from being cached in Redis cache", async () => {
+test("defaultExcludeCacheModels excludes the Prisma model from being cached", async () => {
   // Do some setup stuff
   const dbValue = { key: "test result" };
   const model = "User";
@@ -202,9 +203,9 @@ test("excludeCacheMethods excludes Prisma Action from being cached in Redis cach
   const next = () => Promise.resolve(dbValue);
 
   const middleware = createPrismaRedisCache({
-    models: [{ model, excludeCacheMethods: [action] }],
     storage: { type: "redis", options: { client: redis } },
     defaultCacheTime,
+    defaultExcludeCacheModels: [model],
   });
 
   // Run a "fake" User Prisma query
