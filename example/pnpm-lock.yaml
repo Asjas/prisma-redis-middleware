@@ -7,14 +7,14 @@ specifiers:
   ioredis: 4.28.5
   nodemon: 2.0.15
   prisma: 3.11.0
-  prisma-redis-middleware: 2.0.0-3
+  prisma-redis-middleware: 2.0.0-5
   ts-node: 10.7.0
   typescript: 4.6.2
 
 dependencies:
   ioredis: 4.28.5
   prisma: 3.11.0
-  prisma-redis-middleware: 2.0.0-3
+  prisma-redis-middleware: 2.0.0-5
 
 devDependencies:
   '@prisma/client': 3.11.0_prisma@3.11.0
@@ -37,6 +37,10 @@ packages:
     dependencies:
       '@cspotcode/source-map-consumer': 0.8.0
     dev: true
+
+  /@ioredis/commands/1.1.1:
+    resolution: {integrity: sha512-fsR4P/ROllzf/7lXYyElUJCheWdTJVJvOTps8v9IWKFATxR61ANOlnoPqhH099xYLrJGpc2ZQ28B3rMeUt5VQg==}
+    dev: false
 
   /@prisma/client/3.11.0_prisma@3.11.0:
     resolution: {integrity: sha512-d42o/tlalaWMmNOR4r5BiR6YYTYEV82eZ2lNKOm5ht3WyYwI9e+zy2MyZnNO4Fx5e08RAhW+GRVcEgKl5faUaQ==}
@@ -329,6 +333,11 @@ packages:
     engines: {node: '>=0.10'}
     dev: false
 
+  /denque/2.0.1:
+    resolution: {integrity: sha512-tfiWc6BQLXNLpNiR5iGd0Ocu3P3VpxfzFiqubLgMfhfOw9WyvgJBd46CClNn9k3qfbjvT//0cf7AlYRX/OslMQ==}
+    engines: {node: '>=0.10'}
+    dev: false
+
   /diff/4.0.2:
     resolution: {integrity: sha512-58lmxKSA4BNyLz+HHMUzlOEpg09FV+ev6ZMe3vJihgdxzgcwZ8VoEEPmALCZG9LmqfVoNMMKpttIYTVG6uDY7A==}
     engines: {node: '>=0.3.1'}
@@ -478,6 +487,23 @@ packages:
       lodash.isarguments: 3.1.0
       p-map: 2.1.0
       redis-commands: 1.7.0
+      redis-errors: 1.2.0
+      redis-parser: 3.0.0
+      standard-as-callback: 2.1.0
+    transitivePeerDependencies:
+      - supports-color
+    dev: false
+
+  /ioredis/5.0.1:
+    resolution: {integrity: sha512-/5MF5vnUQf1o3+sy/pnkce5K8zdSMTcTgpRUW5oGGT+mEsgd1r7YLRPZ+zWGb9hbZXE3BJCgphc2eESm+2d9KA==}
+    engines: {node: '>=12.22.0'}
+    dependencies:
+      '@ioredis/commands': 1.1.1
+      cluster-key-slot: 1.1.0
+      debug: 4.3.4
+      denque: 2.0.1
+      lodash.defaults: 4.2.0
+      lodash.isarguments: 3.1.0
       redis-errors: 1.2.0
       redis-parser: 3.0.0
       standard-as-callback: 2.1.0
@@ -713,13 +739,12 @@ packages:
     engines: {node: '>=4'}
     dev: true
 
-  /prisma-redis-middleware/2.0.0-3:
-    resolution: {integrity: sha512-b/nPFsQ+BCrq5txcF0nWEnbxNuNTrY75IDy7sbRz+f98LUpIpLLDIKY/qtTp1OfA3JiBjWn5X/2DLFQor+qSoQ==}
+  /prisma-redis-middleware/2.0.0-5:
+    resolution: {integrity: sha512-L3XIPnN264OywmKXqyT08/3VOXi3iPlfMX0z2Dh8v7tToJVtKf3NXfo7D+IyTOBi+3kLzoEgKXVSGvWGqjm5iw==}
     engines: {node: ^12.x || ^14.x || ^16.x, npm: ^6.x || ^7.x || ^8.x}
     dependencies:
       async-cache-dedupe: 1.2.2
-      ioredis: 4.28.5
-      mnemonist: 0.39.0
+      ioredis: 5.0.1
     transitivePeerDependencies:
       - supports-color
     dev: false
