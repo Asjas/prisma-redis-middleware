@@ -158,7 +158,7 @@ test("should exclude Prisma action from being cached with excludeCacheMethods", 
   assert.equal(JSON.parse((await redis.get(cacheKey)) as string), null);
 });
 
-test("should exclude Prisma method from beign cached with defaultExcludeCacheMethods", async () => {
+test("should exclude a Prisma method from being cached with defaultExcludeCacheMethods", async () => {
   // Do some setup stuff
   const dbValue = { key: "test result" };
   const model = "User";
@@ -191,7 +191,7 @@ test("should exclude Prisma method from beign cached with defaultExcludeCacheMet
   assert.equal(JSON.parse((await redis.get(cacheKey)) as string), null);
 });
 
-test("should exclude Prisma model from being cached with defaultExcludeCacheModels", async () => {
+test("should exclude a Prisma model from being cached with defaultExcludeCacheModels", async () => {
   // Do some setup stuff
   const dbValue = { key: "test result" };
   const model = "User";
