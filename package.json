@@ -1,11 +1,12 @@
 {
   "name": "prisma-redis-middleware",
   "author": "A-J Roos <asjas@hey.com>",
-  "version": "1.4.0",
+  "version": "2.0.0-5",
   "description": "Prisma Middleware for caching results of queries in Redis",
-  "license": "MIT",
-  "main": "dist/index.js",
-  "typings": "dist/index.d.ts",
+  "license": "Hippocratic-3.0",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "source": "./src/index.ts",
   "module": "dist/prisma-redis-middleware.esm.js",
   "files": [
     "dist",
@@ -16,9 +17,9 @@
     "build": "tsdx build",
     "clean": "rimraf dist",
     "prepare": "tsdx build",
-    "test": "tap",
-    "test:watch": "tap -w",
-    "coverage": "npm test -- --coverage-report=lcov",
+    "test": "vitest",
+    "test:watch": "vitest -w",
+    "coverage": "vitest run --coverage",
     "check-types": "tsc",
     "lint": "eslint --ext .ts .",
     "lint-fix": "npm run lint -- --fix",
@@ -30,26 +31,24 @@
     "analyze": "size-limit --why"
   },
   "dependencies": {
-    "debug": "4.3.3",
-    "ioredis": "4.28.5"
+    "async-cache-dedupe": "1.2.2",
+    "ioredis": "5.0.1"
   },
   "devDependencies": {
     "@size-limit/preset-small-lib": "7.0.8",
-    "@types/debug": "4.1.7",
-    "@types/ioredis": "4.28.8",
     "@types/ioredis-mock": "5.6.0",
-    "@types/tap": "15.0.6",
-    "eslint-config-asjas": "1.0.0",
+    "c8": "7.11.0",
+    "eslint-config-asjas": "2.0.2",
     "husky": "7.0.4",
-    "ioredis-mock": "7.1.0",
-    "lint-staged": "12.3.5",
+    "ioredis-mock": "7.2.0",
+    "lint-staged": "12.3.7",
     "npm-run-all": "4.1.5",
     "rimraf": "3.0.2",
-    "tap": "16.0.0",
-    "ts-node": "10.7.0",
+    "size-limit": "7.0.8",
     "tsdx": "0.14.1",
     "tslib": "2.3.1",
-    "typescript": "4.6.2"
+    "typescript": "4.6.3",
+    "vitest": "0.7.12"
   },
   "husky": {
     "hooks": {
@@ -67,12 +66,12 @@
   },
   "size-limit": [
     {
-      "path": "dist/mylib.cjs.production.min.js",
-      "limit": "10 KB"
+      "path": "dist/prisma-redis-middleware.cjs.production.min.js",
+      "limit": "16 KB"
     },
     {
-      "path": "dist/mylib.esm.js",
-      "limit": "10 KB"
+      "path": "dist/prisma-redis-middleware.esm.js",
+      "limit": "16 KB"
     }
   ],
   "engines": {

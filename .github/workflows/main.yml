@@ -21,20 +21,11 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node }}
+          cache: "npm"
+      - run: npm i -g npm@7
 
-      - name: Install deps and build (with cache)
-        uses: bahmutov/npm-install@v1
-
-      - name: Run the tests
-        run: npm test
+      - name: Install npm dependencies & build project with tsdx
+        run: npm i
 
       - name: Run validation npm script
         run: npm run validate
-
-      - name: Generate coverage report
-        run: npm run coverage
-
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v2
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}

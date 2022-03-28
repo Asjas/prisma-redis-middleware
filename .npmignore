@@ -1,3 +1,6 @@
+.vscode
+.github
+.nyc_output
 node_modules
-dist
+test
 renovate.json
