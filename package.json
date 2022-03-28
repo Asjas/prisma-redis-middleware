@@ -7,7 +7,7 @@
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "source": "./src/index.ts",
-  "module": "dist/prisma-redis-middleware.esm.js",
+  "module": "./dist/prisma-redis-middleware.esm.js",
   "files": [
     "dist",
     "src"
