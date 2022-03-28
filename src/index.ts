@@ -100,7 +100,11 @@ export const createPrismaRedisCache = ({
     const cacheFunction = cache[params.model];
 
     // Only cache the data if the Prisma model hasn't been excluded and if the Prisma method wasn't excluded either
-    if (!defaultExcludeCacheModels?.includes(params.model) && excludedCacheMethods?.includes(params.action)) {
+    if (
+      !defaultExcludeCacheModels?.includes(params.model) &&
+      excludedCacheMethods?.includes(params.action) &&
+      typeof cacheFunction === "function"
+    ) {
       try {
         result = await cacheFunction({ cb: fetchFromPrisma, params });
       } catch (err) {
