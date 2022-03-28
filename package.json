@@ -67,11 +67,11 @@
   "size-limit": [
     {
       "path": "dist/prisma-redis-middleware.cjs.production.min.js",
-      "limit": "50 KB"
+      "limit": "16 KB"
     },
     {
       "path": "dist/prisma-redis-middleware.esm.js",
-      "limit": "50 KB"
+      "limit": "16 KB"
     }
   ],
   "engines": {
