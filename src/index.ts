@@ -54,7 +54,7 @@ export const createPrismaRedisCache = ({
       // Add a cache function for each model specified in the models option
       models?.forEach(({ model, cacheTime, cacheKey }) => {
         // Only define the cache function for a model if it doesn't exist yet and hasn't been excluded
-        if (!cache[model]) {
+        if (!cache[model] && !defaultExcludeCacheModels?.includes(params.model)) {
           cache.define(
             model,
             {
