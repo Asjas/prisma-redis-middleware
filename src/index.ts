@@ -77,9 +77,9 @@ export const createPrismaRedisCache = ({
         }
       });
 
-      // Define a cache function for any Prisma model that wasn't explicitly defined in `models`
+      // Define a cache function for any Prisma model if `models` was not defined
       // Only define the cache function for a model if it doesn't exist yet and hasn't been excluded
-      if (!cache[params.model] && !defaultExcludeCacheModels?.includes(params.model)) {
+      if (!models?.length && !cache[params.model] && !defaultExcludeCacheModels?.includes(params.model)) {
         cache.define(
           params.model,
           {
