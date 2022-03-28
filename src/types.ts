@@ -75,7 +75,7 @@ export type CreatePrismaRedisCache = {
         options?: MemoryStorageOptions;
       };
   defaultCacheTime?: number;
-  excludeCacheModels?: string[];
+  defaultExcludeCacheModels?: string[];
   defaultExcludeCacheMethods?: PrismaQueryAction[];
   onError?: () => void;
   onHit?: () => void;

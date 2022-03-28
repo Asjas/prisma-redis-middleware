@@ -91,7 +91,7 @@ prismaClient.$use(
     ],
     storage: { type: "redis", options: { client: redis, invalidation: { referencesTTL: 300 }, log: console } },
     defaultCacheTime: 300,
-    excludeCacheModels: ["Product", "Cart"],
+    defaultExcludeCacheModels: ["Product", "Cart"],
     defaultExcludeCacheMethods: ["count", "groupby"],
     onDedupe: (key) => {
       console.log("deduped", key);
@@ -156,7 +156,7 @@ Options:
 - `onMiss`: (optional) a function that is called every time the result is not in the cache.
 - `defaultCacheTime`: (optional) (number) the default time (in ms) to use for models that don't have a `cacheTime` value
   set. Default is 0.
-- `excludeCacheModels`: (optional) (string) an array of models to exclude from being cached.
+- `defaultExcludeCacheModels`: (optional) (string) an array of models to exclude from being cached.
 - `defaultExcludeCacheMethods`: (optional) (string) an array of Prisma methods to exclude from being cached for all
   models.
 - `models`: (optional) an array of Prisma models. Models options are:

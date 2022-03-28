@@ -21,7 +21,7 @@ export const createPrismaRedisCache = ({
   onMiss,
   defaultCacheTime = DEFAULT_CACHE_TIME,
   defaultExcludeCacheMethods = [],
-  excludeCacheModels = [],
+  defaultExcludeCacheModels = [],
   storage = { type: "memory" },
 }: CreatePrismaRedisCache) => {
   // Default options for "async-cache-dedupe"
@@ -54,7 +54,7 @@ export const createPrismaRedisCache = ({
       // Add a cache function for each model specified in the models option
       models?.forEach(({ model, cacheTime, cacheKey }) => {
         // Only define the cache function for a model if it doesn't exist yet and hasn't been excluded
-        if (!cache[model] && !excludeCacheModels?.includes(model)) {
+        if (!cache[model]) {
           cache.define(
             model,
             {
@@ -74,7 +74,7 @@ export const createPrismaRedisCache = ({
 
       // Define a cache function for any Prisma model that wasn't explicitly defined in `models`
       // Only define the cache function for a model if it doesn't exist yet and hasn't been excluded
-      if (!cache[params.model] && !excludeCacheModels?.includes(params.model)) {
+      if (!cache[params.model] && !defaultExcludeCacheModels?.includes(params.model)) {
         cache.define(
           params.model,
           {
@@ -95,7 +95,7 @@ export const createPrismaRedisCache = ({
     const cacheFunction = cache[params.model];
 
     // Only cache the data if the Prisma model hasn't been excluded and if the Prisma method wasn't excluded either
-    if (!excludeCacheModels?.includes(params.model) && excludedCacheMethods?.includes(params.action)) {
+    if (!defaultExcludeCacheModels?.includes(params.model) && excludedCacheMethods?.includes(params.action)) {
       try {
         result = await cacheFunction({ cb: fetchFromPrisma, params });
       } catch (err) {
