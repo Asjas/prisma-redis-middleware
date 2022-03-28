@@ -6,6 +6,7 @@
 [![codecov](https://codecov.io/gh/Asjas/prisma-redis-middleware/branch/main/graph/badge.svg?token=6F6DDOSRK8)](https://codecov.io/gh/Asjas/prisma-redis-middleware)
 [![Main WorkFlow](https://github.com/Asjas/prisma-redis-middleware/actions/workflows/main.yml/badge.svg)](https://github.com/Asjas/prisma-redis-middleware/actions/workflows/main.yml)
 [![CodeQL WorkFlow](https://github.com/Asjas/prisma-redis-middleware/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/Asjas/prisma-redis-middleware/actions/workflows/codeql-analysis.yml)
+[![Library code size](https://github.com/Asjas/prisma-redis-middleware/actions/workflows/size.yml/badge.svg)](https://github.com/Asjas/prisma-redis-middleware/actions/workflows/size.yml)
 
 This is a Prisma middleware used for caching and storing of Prisma queries in Redis (uses an in-memory LRU cache as
 fallback storage).
