@@ -8,6 +8,7 @@ import type {
   Middleware,
   MiddlewareParams,
   PrismaAction,
+  PrismaQueryAction,
   Result,
 } from "./types";
 
@@ -52,9 +53,13 @@ export const createPrismaRedisCache = ({
     // Do not cache any Prisma method that has been excluded
     if (excludedCacheMethods?.includes(params.action)) {
       // Add a cache function for each model specified in the models option
-      models?.forEach(({ model, cacheTime, cacheKey }) => {
+      models?.forEach(({ model, cacheTime, cacheKey, excludeCacheMethods }) => {
         // Only define the cache function for a model if it doesn't exist yet and hasn't been excluded
-        if (!cache[model] && !defaultExcludeCacheModels?.includes(params.model)) {
+        if (
+          !cache[model] &&
+          !defaultExcludeCacheModels?.includes(params.model) &&
+          !excludeCacheMethods?.includes(params.action as PrismaQueryAction)
+        ) {
           cache.define(
             model,
             {
