@@ -19,10 +19,10 @@ export const createPrismaRedisCache = ({
   onError,
   onHit,
   onMiss,
+  storage,
   defaultCacheTime = DEFAULT_CACHE_TIME,
   defaultExcludeCacheMethods = [],
   defaultExcludeCacheModels = [],
-  storage = { type: "memory" },
 }: CreatePrismaRedisCache) => {
   // Default options for "async-cache-dedupe"
   const cacheOptions = {
