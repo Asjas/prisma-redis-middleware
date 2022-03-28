@@ -57,14 +57,12 @@ export type MemoryStorageOptions = {
 };
 
 export type CreatePrismaRedisCache = {
-  models?: [
-    {
-      model: string;
-      cacheKey?: string;
-      cacheTime?: number;
-      excludeCacheMethods?: [PrismaQueryAction];
-    },
-  ];
+  models?: {
+    model: string;
+    cacheKey?: string;
+    cacheTime?: number;
+    excludeCacheMethods?: PrismaQueryAction[];
+  }[];
   storage?:
     | {
         type: "redis";
