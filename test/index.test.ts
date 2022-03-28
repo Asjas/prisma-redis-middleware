@@ -44,7 +44,7 @@ test("should cache a single Prisma model", async () => {
   expect(JSON.parse((await redis.get(cacheKey)) as string)).toMatchObject(dbValue);
 });
 
-test("should get and set multiple Prisma models in Redis cache", async () => {
+test("should cache multiple Prisma models in cache", async () => {
   // Do some setup stuff
   const dbValue = { key: "test result" };
   const model1 = "User";
@@ -93,7 +93,7 @@ test("should get and set multiple Prisma models in Redis cache", async () => {
   expect(JSON.parse((await redis.get(cacheKey2)) as string)).toMatchObject(dbValue);
 });
 
-test("custom cacheKey is used when caching the Prisma model", async () => {
+test("should use custom cacheKey when caching a Prisma model", async () => {
   // Do some setup stuff
   const dbValue = { key: "test result" };
   const model = "Post";
@@ -126,7 +126,7 @@ test("custom cacheKey is used when caching the Prisma model", async () => {
   assert.equal(JSON.parse((await redis.get(cacheKey)) as string), null);
 });
 
-test("excludeCacheMethods excludes the Prisma Action from being cached", async () => {
+test("should exclude Prisma action from being cached with excludeCacheMethods", async () => {
   // Do some setup stuff
   const dbValue = { key: "test result" };
   const model = "User";
@@ -158,7 +158,7 @@ test("excludeCacheMethods excludes the Prisma Action from being cached", async (
   assert.equal(JSON.parse((await redis.get(cacheKey)) as string), null);
 });
 
-test("defaultExcludeCacheMethods excludes the Prisma Action from being cached", async () => {
+test("should exclude Prisma method from beign cached with defaultExcludeCacheMethods", async () => {
   // Do some setup stuff
   const dbValue = { key: "test result" };
   const model = "User";
@@ -191,7 +191,7 @@ test("defaultExcludeCacheMethods excludes the Prisma Action from being cached", 
   assert.equal(JSON.parse((await redis.get(cacheKey)) as string), null);
 });
 
-test("defaultExcludeCacheModels excludes the Prisma model from being cached", async () => {
+test("should exclude Prisma model from being cached with defaultExcludeCacheModels", async () => {
   // Do some setup stuff
   const dbValue = { key: "test result" };
   const model = "User";
@@ -223,7 +223,7 @@ test("defaultExcludeCacheModels excludes the Prisma model from being cached", as
   assert.equal(JSON.parse((await redis.get(cacheKey)) as string), null);
 });
 
-test("should invalidate cache after data mutation", async () => {
+test("should invalidate a single Prisma model cache after data mutation", async () => {
   // Do some setup stuff
   const dbValue = { key: "test result" };
   const model = "User";
