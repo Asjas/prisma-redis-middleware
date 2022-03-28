@@ -21,18 +21,14 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node }}
-
-      - name: Install npm v7
-        run: npm i -g npm@7
+          cache: "npm"
+      - run: npm i -g npm@7
 
       - name: Install npm dependencies & build project with tsdx
         run: npm i
 
       - name: Run validation npm script
         run: npm run validate
-
-      - name: Run the tests
-        run: npm test
 
       - name: Generate coverage report
         run: npm run coverage
