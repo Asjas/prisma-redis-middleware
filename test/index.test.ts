@@ -93,7 +93,6 @@ test("should get and set multiple Prisma models in Redis cache", async () => {
   expect(JSON.parse((await redis.get(cacheKey2)) as string)).toMatchObject(dbValue);
 });
 
-test("defaultExcludeCacheMethods excludes Prisma Action from being cached in Redis cache", async () => {
 test("custom cacheKey is used when caching the Prisma model", async () => {
   // Do some setup stuff
   const dbValue = { key: "test result" };
@@ -159,6 +158,7 @@ test("excludeCacheMethods excludes the Prisma Action from being cached", async (
   assert.equal(JSON.parse((await redis.get(cacheKey)) as string), null);
 });
 
+test("defaultExcludeCacheMethods excludes the Prisma Action from being cached", async () => {
   // Do some setup stuff
   const dbValue = { key: "test result" };
   const model = "User";
@@ -170,7 +170,7 @@ test("excludeCacheMethods excludes the Prisma Action from being cached", async (
 
   const middleware = createPrismaRedisCache({
     models: [{ model }],
-    storage: { type: "redis", options: { client: redis, log: console } },
+    storage: { type: "redis", options: { client: redis } },
     defaultCacheTime,
     defaultExcludeCacheMethods: [action],
   });
@@ -191,7 +191,6 @@ test("excludeCacheMethods excludes the Prisma Action from being cached", async (
   assert.equal(JSON.parse((await redis.get(cacheKey)) as string), null);
 });
 
-test("excludeCacheMethods excludes Prisma Action from being cached in Redis cache", async () => {
 test("defaultExcludeCacheModels excludes the Prisma model from being cached", async () => {
   // Do some setup stuff
   const dbValue = { key: "test result" };
