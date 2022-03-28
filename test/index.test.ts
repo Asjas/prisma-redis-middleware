@@ -1,8 +1,8 @@
 import MockRedis from "ioredis-mock";
-import { test, expect, afterEach, assert } from "vitest";
-import { createPrismaRedisCache } from "../src";
-
 import type Redis from "ioredis";
+import { test, expect, afterEach, assert } from "vitest";
+
+import { createPrismaRedisCache } from "../src";
 
 // Create the mock Redis instance we need
 // Do some funky shit to get TypeScript to be happy 😫
@@ -13,16 +13,19 @@ afterEach(async () => {
   await redis.flushall();
 });
 
-test("should cache a single Prisma model", async () => {
-  // Do some setup stuff
-  const dbValue = { key: "test result" };
-  const model = "User";
-  const action = "findUnique";
-  const args = { where: { foo: "bar" } };
-  const defaultCacheTime = 2000; // 2 seconds
-  const cacheKey = `User~{"params":{"action":"findUnique","args":{"where":{"foo":"bar"}},"dataPath":[],"model":"User","runInTransaction":false}}`;
-  const next = () => Promise.resolve(dbValue);
+// Do some setup stuff
+const dbValue = { key: "test result" };
+const model1 = "User";
+const model2 = "Post";
+const action1 = "findUnique";
+const action2 = "findFirst";
+const args = { where: { foo: "bar" } };
+const defaultCacheTime = 2000; // 2 seconds
+const cacheKey1 = `${model1}~{"params":{"action":"${action1}","args":{"where":{"foo":"bar"}},"dataPath":[],"model":"${model1}","runInTransaction":false}}`;
+const cacheKey2 = `${model2}~{"params":{"action":"${action2}","args":{"where":{"foo":"bar"}},"dataPath":[],"model":"${model2}","runInTransaction":false}}`;
+const next = () => Promise.resolve(dbValue);
 
+test("should cache a single Prisma model", async () => {
   const middleware = createPrismaRedisCache({
     defaultCacheTime,
     storage: { type: "redis", options: { client: redis } },
@@ -32,8 +35,8 @@ test("should cache a single Prisma model", async () => {
   await middleware(
     {
       args,
-      action,
-      model,
+      action: action1,
+      model: model1,
       dataPath: [],
       runInTransaction: false,
     },
@@ -41,20 +44,11 @@ test("should cache a single Prisma model", async () => {
   );
 
   // Test if the data exists in the cache
-  expect(JSON.parse((await redis.get(cacheKey)) as string)).toMatchObject(dbValue);
+  expect(JSON.parse((await redis.get(cacheKey1)) as string)).toMatchObject(dbValue);
 });
 
 test("should cache multiple Prisma models in cache", async () => {
-  // Do some setup stuff
-  const dbValue = { key: "test result" };
-  const model1 = "User";
-  const model2 = "Post";
-  const action = "findUnique";
-  const args = { where: { foo: "bar" } };
   const cacheTime = 2000; // 2 seconds
-  const cacheKey1 = `User~{"params":{"action":"findUnique","args":{"where":{"foo":"bar"}},"dataPath":[],"model":"User","runInTransaction":false}}`;
-  const cacheKey2 = `Post~{"params":{"action":"findUnique","args":{"where":{"foo":"bar"}},"dataPath":[],"model":"Post","runInTransaction":false}}`;
-  const next = () => Promise.resolve(dbValue);
 
   const middleware = createPrismaRedisCache({
     models: [
@@ -68,7 +62,7 @@ test("should cache multiple Prisma models in cache", async () => {
   await middleware(
     {
       args,
-      action,
+      action: action1,
       model: model1,
       dataPath: [],
       runInTransaction: false,
@@ -80,7 +74,7 @@ test("should cache multiple Prisma models in cache", async () => {
   await middleware(
     {
       args,
-      action,
+      action: action2,
       model: model2,
       dataPath: [],
       runInTransaction: false,
@@ -94,18 +88,11 @@ test("should cache multiple Prisma models in cache", async () => {
 });
 
 test("should use custom cacheKey when caching a Prisma model", async () => {
-  // Do some setup stuff
-  const dbValue = { key: "test result" };
-  const model = "Post";
-  const action = "findFirst";
-  const args = { where: { foo: "bar" } };
-  const defaultCacheTime = 2000; // 2 seconds
   const customCacheKey = "Article";
-  const cacheKey = `${customCacheKey}~{"params":{"action":"findFirst","args":{"where":{"foo":"bar"}},"dataPath":[],"model":${customCacheKey},"runInTransaction":false}}`;
-  const next = () => Promise.resolve(dbValue);
+  const cacheKey = `${customCacheKey}~{"params":{"action":"${action1}","args":{"where":{"foo":"bar"}},"dataPath":[],"model":${customCacheKey},"runInTransaction":false}}`;
 
   const middleware = createPrismaRedisCache({
-    models: [{ model, cacheKey: customCacheKey }],
+    models: [{ model: model1, cacheKey: customCacheKey }],
     storage: { type: "redis", options: { client: redis } },
     defaultCacheTime,
   });
@@ -114,8 +101,8 @@ test("should use custom cacheKey when caching a Prisma model", async () => {
   await middleware(
     {
       args,
-      action,
-      model,
+      action: action1,
+      model: model1,
       dataPath: [],
       runInTransaction: false,
     },
@@ -127,17 +114,8 @@ test("should use custom cacheKey when caching a Prisma model", async () => {
 });
 
 test("should exclude Prisma action from being cached with excludeCacheMethods", async () => {
-  // Do some setup stuff
-  const dbValue = { key: "test result" };
-  const model = "User";
-  const action = "findFirst";
-  const args = { where: { foo: "bar" } };
-  const defaultCacheTime = 2000; // 2 seconds
-  const cacheKey = `User~{"params":{"action":"findFirst","args":{"where":{"foo":"bar"}},"dataPath":[],"model":"User","runInTransaction":false}}`;
-  const next = () => Promise.resolve(dbValue);
-
   const middleware = createPrismaRedisCache({
-    models: [{ model, excludeCacheMethods: [action] }],
+    models: [{ model: model1, excludeCacheMethods: [action1] }],
     storage: { type: "redis", options: { client: redis } },
     defaultCacheTime,
   });
@@ -146,105 +124,7 @@ test("should exclude Prisma action from being cached with excludeCacheMethods", 
   await middleware(
     {
       args,
-      action,
-      model,
-      dataPath: [],
-      runInTransaction: false,
-    },
-    next,
-  );
-
-  // Test if the query was skipped and does not exist in cache
-  assert.equal(JSON.parse((await redis.get(cacheKey)) as string), null);
-});
-
-test("should exclude Prisma method from beign cached with defaultExcludeCacheMethods", async () => {
-  // Do some setup stuff
-  const dbValue = { key: "test result" };
-  const model = "User";
-  const action = "findFirst";
-  const args = { where: { foo: "bar" } };
-  const defaultCacheTime = 2000; // 2 seconds
-  const cacheKey = `User~{"params":{"action":"findFirst","args":{"where":{"foo":"bar"}},"dataPath":[],"model":"User","runInTransaction":false}}`;
-  const next = () => Promise.resolve(dbValue);
-
-  const middleware = createPrismaRedisCache({
-    models: [{ model }],
-    storage: { type: "redis", options: { client: redis } },
-    defaultCacheTime,
-    defaultExcludeCacheMethods: [action],
-  });
-
-  // Run a "fake" User Prisma query
-  await middleware(
-    {
-      args,
-      action,
-      model,
-      dataPath: [],
-      runInTransaction: false,
-    },
-    next,
-  );
-
-  // Test if the query was skipped and does not exist in cache
-  assert.equal(JSON.parse((await redis.get(cacheKey)) as string), null);
-});
-
-test("should exclude Prisma model from being cached with defaultExcludeCacheModels", async () => {
-  // Do some setup stuff
-  const dbValue = { key: "test result" };
-  const model = "User";
-  const action = "findFirst";
-  const args = { where: { foo: "bar" } };
-  const defaultCacheTime = 2000; // 2 seconds
-  const cacheKey = `User~{"params":{"action":"findFirst","args":{"where":{"foo":"bar"}},"dataPath":[],"model":"User","runInTransaction":false}}`;
-  const next = () => Promise.resolve(dbValue);
-
-  const middleware = createPrismaRedisCache({
-    storage: { type: "redis", options: { client: redis } },
-    defaultCacheTime,
-    defaultExcludeCacheModels: [model],
-  });
-
-  // Run a "fake" User Prisma query
-  await middleware(
-    {
-      args,
-      action,
-      model,
-      dataPath: [],
-      runInTransaction: false,
-    },
-    next,
-  );
-
-  // Test if the query was skipped and does not exist in cache
-  assert.equal(JSON.parse((await redis.get(cacheKey)) as string), null);
-});
-
-test("should invalidate a single Prisma model cache after data mutation", async () => {
-  // Do some setup stuff
-  const dbValue = { key: "test result" };
-  const model1 = "User";
-  const model2 = "Post";
-  const action = "findUnique";
-  const args = { where: { foo: "bar" } };
-  const defaultCacheTime = 2000; // 2 seconds
-  const cacheKey1 = `User~{"params":{"action":"findUnique","args":{"where":{"foo":"bar"}},"dataPath":[],"model":"User","runInTransaction":false}}`;
-  const cacheKey2 = `Post~{"params":{"action":"findUnique","args":{"where":{"foo":"bar"}},"dataPath":[],"model":"Post","runInTransaction":false}}`;
-  const next = () => Promise.resolve(dbValue);
-
-  const middleware = createPrismaRedisCache({
-    storage: { type: "redis", options: { client: redis, invalidation: true } },
-    defaultCacheTime,
-  });
-
-  // Run a "fake" User Prisma query
-  await middleware(
-    {
-      args,
-      action,
+      action: action1,
       model: model1,
       dataPath: [],
       runInTransaction: false,
@@ -256,7 +136,7 @@ test("should invalidate a single Prisma model cache after data mutation", async 
   await middleware(
     {
       args,
-      action,
+      action: action2,
       model: model2,
       dataPath: [],
       runInTransaction: false,
@@ -264,7 +144,117 @@ test("should invalidate a single Prisma model cache after data mutation", async 
     next,
   );
 
-  // Test if data exists in the Redis cache
+  // Test if the query was skipped and does not exist in cache
+  assert.equal(JSON.parse((await redis.get(cacheKey1)) as string), null);
+  expect(JSON.parse((await redis.get(cacheKey2)) as string)).toMatchObject(dbValue);
+});
+
+test("should exclude a Prisma method from being cached with defaultExcludeCacheMethods", async () => {
+  const middleware = createPrismaRedisCache({
+    models: [{ model: model1 }],
+    storage: { type: "redis", options: { client: redis } },
+    defaultCacheTime,
+    defaultExcludeCacheMethods: [action1],
+  });
+
+  // Run a "fake" User Prisma query
+  await middleware(
+    {
+      args,
+      action: action1,
+      model: model1,
+      dataPath: [],
+      runInTransaction: false,
+    },
+    next,
+  );
+
+  // Run a "fake" Post Prisma query
+  await middleware(
+    {
+      args,
+      action: action2,
+      model: model2,
+      dataPath: [],
+      runInTransaction: false,
+    },
+    next,
+  );
+
+  // Test if the query was skipped and does not exist in cache
+  assert.equal(JSON.parse((await redis.get(cacheKey1)) as string), null);
+  // Test that (non-excluded) queries are still cached
+  expect(JSON.parse((await redis.get(cacheKey2)) as string)).toMatchObject(dbValue);
+});
+
+test("should exclude a Prisma model from being cached with defaultExcludeCacheModels", async () => {
+  const middleware = createPrismaRedisCache({
+    storage: { type: "redis", options: { client: redis } },
+    defaultCacheTime,
+    defaultExcludeCacheModels: [model1],
+  });
+
+  // Run a "fake" User Prisma query
+  await middleware(
+    {
+      args,
+      action: action1,
+      model: model1,
+      dataPath: [],
+      runInTransaction: false,
+    },
+    next,
+  );
+
+  // Run a "fake" Post Prisma query
+  await middleware(
+    {
+      args,
+      action: action2,
+      model: model2,
+      dataPath: [],
+      runInTransaction: false,
+    },
+    next,
+  );
+
+  // Test if the Model was skipped and does not exist in cache
+  assert.equal(JSON.parse((await redis.get(cacheKey1)) as string), null);
+  // Make sure that other (non-excluded) models are still cached
+  expect(JSON.parse((await redis.get(cacheKey2)) as string)).toMatchObject(dbValue);
+});
+
+test("should invalidate a single Prisma model cache after data mutation", async () => {
+  const middleware = createPrismaRedisCache({
+    storage: { type: "redis", options: { client: redis, invalidation: true } },
+    defaultCacheTime,
+  });
+
+  // Run a "fake" User Prisma query
+  await middleware(
+    {
+      args,
+      action: action1,
+      model: model1,
+      dataPath: [],
+      runInTransaction: false,
+    },
+    next,
+  );
+
+  // Run a "fake" Post Prisma query
+  await middleware(
+    {
+      args,
+      action: action2,
+      model: model2,
+      dataPath: [],
+      runInTransaction: false,
+    },
+    next,
+  );
+
+  // Test if data exists in the cache
   expect(JSON.parse((await redis.get(cacheKey1)) as string)).toMatchObject(dbValue);
   expect(JSON.parse((await redis.get(cacheKey2)) as string)).toMatchObject(dbValue);
 
@@ -282,5 +272,6 @@ test("should invalidate a single Prisma model cache after data mutation", async 
 
   // Test if the cache was invalidated and cleared properly
   assert.equal(JSON.parse((await redis.get(cacheKey1)) as string), null);
+  // Test that we keep other cached queries that shouldn't be cleared
   expect(JSON.parse((await redis.get(cacheKey2)) as string)).toMatchObject(dbValue);
 });
