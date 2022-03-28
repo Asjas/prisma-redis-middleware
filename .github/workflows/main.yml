@@ -29,3 +29,14 @@ jobs:
 
       - name: Run validation npm script
         run: npm run validate
+
+      - name: Run the tests
+        run: npm test
+
+      - name: Generate coverage report
+        run: npm run coverage
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v2
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
