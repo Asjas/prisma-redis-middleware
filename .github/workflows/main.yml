@@ -28,11 +28,11 @@ jobs:
       - name: Install npm dependencies & build project with tsdx
         run: npm i
 
-      - name: Run the tests
-        run: npm test
-
       - name: Run validation npm script
         run: npm run validate
+
+      - name: Run the tests
+        run: npm test
 
       - name: Generate coverage report
         run: npm run coverage
