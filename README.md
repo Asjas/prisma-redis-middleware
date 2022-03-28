@@ -26,7 +26,6 @@ Uses [async-cache-dedupe](https://github.com/mcollina/async-cache-dedupe).
 
 The latest versions of the following Node.js versions are tested and supported.
 
-- 12
 - 14
 - 16
 
