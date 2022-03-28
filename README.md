@@ -114,9 +114,6 @@ prismaClient.$use(
 ```js
 const { PrismaClient } = require("@prisma/client");
 const { createPrismaRedisCache } = require("prisma-redis-middleware");
-const Redis = require("ioredis");
-
-const redis = new Redis(); // Uses default options for Redis connection
 
 const prismaClient = new PrismaClient();
 
