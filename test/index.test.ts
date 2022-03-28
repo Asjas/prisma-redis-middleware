@@ -1,10 +1,13 @@
-// @ts-ignore
-import ioredismock from "ioredis-mock";
-import tap from "tap";
-import { createPrismaRedisCache } from "../src/";
+import MockRedis from "ioredis-mock";
+import { test, expect, afterEach, assert } from "vitest";
+import { createPrismaRedisCache } from "../src";
+
+import type Redis from "ioredis";
 
 // Create the mock Redis instance we need
-const redis = new ioredismock();
+// Do some funky shit to get TypeScript to be happy 😫
+const mockRedis: unknown = new MockRedis();
+const redis = mockRedis as Redis;
 
 tap.afterEach(async () => {
   await redis.flushall();
