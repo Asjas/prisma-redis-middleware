@@ -17,7 +17,7 @@
     "build": "tsdx build",
     "clean": "rimraf dist",
     "prepare": "tsdx build",
-    "test": "vitest",
+    "test": "vitest run",
     "test:watch": "vitest -w",
     "coverage": "vitest run --coverage",
     "check-types": "tsc",
