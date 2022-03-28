@@ -1,4 +1,4 @@
-import type { PrismaMutationAction, PrismaQueryAction } from "./types";
+import type { PrismaQueryAction } from "./types";
 
 export const defaultCacheMethods: PrismaQueryAction[] = [
   "findUnique",
@@ -9,16 +9,4 @@ export const defaultCacheMethods: PrismaQueryAction[] = [
   "groupBy",
   "findRaw",
   "aggregateRaw",
-];
-
-export const defaultMutationMethods: PrismaMutationAction[] = [
-  "create",
-  "create",
-  "createMany",
-  "update",
-  "updateMany",
-  "upsert",
-  "delete",
-  "deleteMany",
-  "executeRawUnsafe",
 ];
