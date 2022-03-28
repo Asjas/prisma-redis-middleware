@@ -13,18 +13,17 @@ afterEach(async () => {
   await redis.flushall();
 });
 
-tap.test("should get and set a single Prisma model in Redis cache", async ({ equal }) => {
+test("should cache a single Prisma model", async () => {
   // Do some setup stuff
-  const dbValue = "test result";
+  const dbValue = { key: "test result" };
   const model = "User";
   const action = "findUnique";
   const args = { where: { foo: "bar" } };
   const defaultCacheTime = 2000; // 2 seconds
-  const cacheKey = `${model}:${action}:${JSON.stringify(args)}`;
+  const cacheKey = `User~{"params":{"action":"findUnique","args":{"where":{"foo":"bar"}},"dataPath":[],"model":"User","runInTransaction":false}}`;
   const next = () => Promise.resolve(dbValue);
 
   const middleware = createPrismaRedisCache({
-    models: [{ model: "User" }],
     defaultCacheTime,
     storage: { type: "redis", options: { client: redis } },
   });
@@ -42,7 +41,7 @@ tap.test("should get and set a single Prisma model in Redis cache", async ({ equ
   );
 
   // Test if the data exists in the cache
-  equal(JSON.parse((await redis.get(cacheKey)) as string), dbValue);
+  expect(JSON.parse((await redis.get(cacheKey)) as string)).toMatchObject(dbValue);
 });
 
 // tap.test("should get and set multiple Prisma models in Redis cache", async ({ equal }) => {
