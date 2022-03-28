@@ -22,11 +22,8 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
 
-      - name: Install npm dependencies
+      - name: Install npm dependencies & build project with tsdx
         run: npm i
-
-      - name: Build project
-        run: npm run build
 
       - name: Run the tests
         run: npm test
