@@ -1,3 +1,7 @@
+import { createCache } from "async-cache-dedupe";
+
+import { defaultCacheMethods } from "./cacheMethods";
+
 import type {
   CreatePrismaRedisCache,
   FetchFromPrisma,
@@ -6,10 +10,6 @@ import type {
   PrismaAction,
   Result,
 } from "./types";
-
-import { createCache } from "async-cache-dedupe";
-
-import { defaultCacheMethods } from "./cacheMethods";
 
 const DEFAULT_CACHE_TIME = 0;
 
