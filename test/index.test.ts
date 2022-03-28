@@ -93,3 +93,36 @@ test("should get and set multiple Prisma models in Redis cache", async () => {
   expect(JSON.parse((await redis.get(cacheKey2)) as string)).toMatchObject(dbValue);
 });
 
+test("defaultExcludeCacheMethods excludes Prisma Action from being cached in Redis cache", async () => {
+  // Do some setup stuff
+  const dbValue = { key: "test result" };
+  const model = "User";
+  const action = "findFirst";
+  const args = { where: { foo: "bar" } };
+  const defaultCacheTime = 2000; // 2 seconds
+  const cacheKey = `User~{"params":{"action":"findFirst","args":{"where":{"foo":"bar"}},"dataPath":[],"model":"User","runInTransaction":false}}`;
+  const next = () => Promise.resolve(dbValue);
+
+  const middleware = createPrismaRedisCache({
+    models: [{ model }],
+    storage: { type: "redis", options: { client: redis, log: console } },
+    defaultCacheTime,
+    defaultExcludeCacheMethods: [action],
+  });
+
+  // Run a "fake" User Prisma query
+  await middleware(
+    {
+      args,
+      action,
+      model,
+      dataPath: [],
+      runInTransaction: false,
+    },
+    next,
+  );
+
+  // Test if the query was skipped and does not exist in cache
+  assert.equal(JSON.parse((await redis.get(cacheKey)) as string), null);
+});
+
