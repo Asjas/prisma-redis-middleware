@@ -33,7 +33,7 @@
     "prisma:migrate:dev": "prisma migrate dev"
   },
   "dependencies": {
-    "ioredis": "5.0.2",
+    "ioredis": "5.0.3",
     "prisma": "3.11.0",
     "prisma-redis-middleware": "2.1.1"
   },

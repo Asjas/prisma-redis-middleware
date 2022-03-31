@@ -4,7 +4,7 @@ specifiers:
   '@prisma/client': 3.11.0
   '@types/ioredis': 4.28.10
   '@types/node': 17.0.22
-  ioredis: 5.0.2
+  ioredis: 5.0.3
   nodemon: 2.0.15
   prisma: 3.11.0
   prisma-redis-middleware: 2.1.1
@@ -12,7 +12,7 @@ specifiers:
   typescript: 4.6.2
 
 dependencies:
-  ioredis: 5.0.2
+  ioredis: 5.0.3
   prisma: 3.11.0
   prisma-redis-middleware: 2.1.1
 
@@ -487,8 +487,8 @@ packages:
       - supports-color
     dev: false
 
-  /ioredis/5.0.2:
-    resolution: {integrity: sha512-B8yZmqripQXllUUoeX8PhlzcsPiEGZToyD5f2gRzuMYHGOmX0RXh3TNdLIj+wcOs1+tk+W49D8qU9hkVohRFDw==}
+  /ioredis/5.0.3:
+    resolution: {integrity: sha512-hKxywVypoGGUJDyfnMufO0VNkuIaQufo2/PJ5SOYBKWgf4+gCnZEPaBPle615k08euY9/B9DKytVtwZROF7HaA==}
     engines: {node: '>=12.22.0'}
     dependencies:
       '@ioredis/commands': 1.1.1
