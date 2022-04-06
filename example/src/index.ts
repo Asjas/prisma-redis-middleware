@@ -8,9 +8,9 @@ const prisma = new PrismaClient();
 const cacheMiddleware = createPrismaRedisCache({
   models: [
     { model: "User", cacheTime: 300 },
-    { model: "Post", cacheKey: "Article", excludeMethods: ["findMany"] },
+    { model: "Post", cacheKey: "Article" },
   ],
-  storage: { type: "redis", options: { client: redis, invalidation: { referencesTTL: 60 } } },
+  storage: { type: "redis", options: { client: redis, invalidation: { referencesTTL: 300 } } },
   cacheTime: 60,
   onHit: (key: string) => {
     console.log("Hit: ✅", key);
@@ -36,12 +36,12 @@ async function main() {
     },
   });
 
-  await prisma.user.count();
-  await prisma.user.count();
-  await prisma.user.count();
-
   // Invalidate Users cache by running mutation method
   await prisma.user.update({ where: { email: "john@email.com" }, data: { name: "Alice", email: "alice@email.com" } });
+
+  await prisma.user.count();
+  await prisma.user.count();
+  await prisma.user.count();
 
   await prisma.user.findMany({
     where: {
