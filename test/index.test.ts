@@ -20,14 +20,14 @@ const model2 = "Post";
 const action1 = "findUnique";
 const action2 = "findFirst";
 const args = { where: { foo: "bar" } };
-const defaultCacheTime = 2000; // 2 seconds
+const cacheTime = 2000; // 2 seconds
 const cacheKey1 = `${model1}~{"params":{"action":"${action1}","args":{"where":{"foo":"bar"}},"dataPath":[],"model":"${model1}","runInTransaction":false}}`;
 const cacheKey2 = `${model2}~{"params":{"action":"${action2}","args":{"where":{"foo":"bar"}},"dataPath":[],"model":"${model2}","runInTransaction":false}}`;
 const next = () => Promise.resolve(dbValue);
 
 test("should cache a single Prisma model", async () => {
   const middleware = createPrismaRedisCache({
-    defaultCacheTime,
+    cacheTime,
     storage: { type: "redis", options: { client: redis } },
   });
 
@@ -48,8 +48,6 @@ test("should cache a single Prisma model", async () => {
 });
 
 test("should cache multiple Prisma models in cache", async () => {
-  const cacheTime = 2000; // 2 seconds
-
   const middleware = createPrismaRedisCache({
     models: [
       { model: model1, cacheTime },
@@ -94,7 +92,7 @@ test("should use custom cacheKey when caching a Prisma model", async () => {
   const middleware = createPrismaRedisCache({
     models: [{ model: model1, cacheKey: customCacheKey }],
     storage: { type: "redis", options: { client: redis } },
-    defaultCacheTime,
+    cacheTime,
   });
 
   // Run a "fake" User Prisma query
@@ -115,9 +113,9 @@ test("should use custom cacheKey when caching a Prisma model", async () => {
 
 test("should exclude Prisma action from being cached with excludeCacheMethods", async () => {
   const middleware = createPrismaRedisCache({
-    models: [{ model: model1, excludeCacheMethods: [action1] }],
+    models: [{ model: model1, excludeMethods: [action1] }],
     storage: { type: "redis", options: { client: redis } },
-    defaultCacheTime,
+    cacheTime,
   });
 
   // Run a "fake" User Prisma query
@@ -153,8 +151,8 @@ test("should exclude a Prisma method from being cached with defaultExcludeCacheM
   const middleware = createPrismaRedisCache({
     models: [{ model: model1 }],
     storage: { type: "redis", options: { client: redis } },
-    defaultCacheTime,
-    defaultExcludeCacheMethods: [action1],
+    cacheTime,
+    excludeMethods: [action1],
   });
 
   // Run a "fake" User Prisma query
@@ -190,8 +188,8 @@ test("should exclude a Prisma method from being cached with defaultExcludeCacheM
 test("should exclude a Prisma model from being cached with defaultExcludeCacheModels", async () => {
   const middleware = createPrismaRedisCache({
     storage: { type: "redis", options: { client: redis } },
-    defaultCacheTime,
-    defaultExcludeCacheModels: [model1],
+    cacheTime,
+    excludeModels: [model1],
   });
 
   // Run a "fake" User Prisma query
@@ -227,7 +225,7 @@ test("should exclude a Prisma model from being cached with defaultExcludeCacheMo
 test("should invalidate a single Prisma model cache after data mutation", async () => {
   const middleware = createPrismaRedisCache({
     storage: { type: "redis", options: { client: redis, invalidation: true } },
-    defaultCacheTime,
+    cacheTime,
   });
 
   // Run a "fake" User Prisma query

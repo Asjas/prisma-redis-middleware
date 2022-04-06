@@ -21,9 +21,9 @@ export const createPrismaRedisCache = ({
   onHit,
   onMiss,
   storage,
-  defaultCacheTime = DEFAULT_CACHE_TIME,
-  defaultExcludeCacheMethods = [],
-  defaultExcludeCacheModels = [],
+  cacheTime = DEFAULT_CACHE_TIME,
+  excludeModels = [],
+  excludeMethods = [],
 }: CreatePrismaRedisCache) => {
   // Default options for "async-cache-dedupe"
   const cacheOptions = {
@@ -32,12 +32,12 @@ export const createPrismaRedisCache = ({
     onHit,
     onMiss,
     storage,
-    ttl: defaultCacheTime,
+    ttl: cacheTime,
   };
 
   // Do not cache any Prisma method specified in the defaultExcludeCacheMethods option
   const excludedCacheMethods: PrismaAction[] = defaultCacheMethods.filter((cacheMethod) => {
-    return !defaultExcludeCacheMethods.includes(cacheMethod);
+    return !excludeMethods.includes(cacheMethod);
   });
 
   const cache: any = createCache(cacheOptions);
@@ -53,12 +53,12 @@ export const createPrismaRedisCache = ({
     // Do not cache any Prisma method that has been excluded
     if (excludedCacheMethods?.includes(params.action)) {
       // Add a cache function for each model specified in the models option
-      models?.forEach(({ model, cacheTime, cacheKey, excludeCacheMethods }) => {
+      models?.forEach(({ model, cacheTime, cacheKey, excludeMethods }) => {
         // Only define the cache function for a model if it doesn't exist yet and hasn't been excluded
         if (
           !cache[model] &&
-          !defaultExcludeCacheModels?.includes(params.model) &&
-          !excludeCacheMethods?.includes(params.action as PrismaQueryAction)
+          !excludeModels?.includes(params.model) &&
+          !excludeMethods?.includes(params.action as PrismaQueryAction)
         ) {
           cache.define(
             model,
@@ -78,8 +78,8 @@ export const createPrismaRedisCache = ({
       });
 
       // For each defined model in `models` we check if they defined any caching methods to be excluded
-      const excludedCacheMethodsInModels = models?.find(({ model, excludeCacheMethods }) => {
-        if (model === params.model && excludeCacheMethods?.length) {
+      const excludedCacheMethodsInModels = models?.find(({ model, excludeMethods }) => {
+        if (model === params.model && excludeMethods?.length) {
           return true;
         }
 
@@ -91,8 +91,8 @@ export const createPrismaRedisCache = ({
       // Do not define a cache function if the Prisma method was exluded in `models`
       if (
         !cache[params.model] &&
-        !defaultExcludeCacheModels?.includes(params.model) &&
-        !excludedCacheMethodsInModels?.excludeCacheMethods?.includes(params.action as PrismaQueryAction)
+        !excludeModels?.includes(params.model) &&
+        !excludedCacheMethodsInModels?.excludeMethods?.includes(params.action as PrismaQueryAction)
       ) {
         cache.define(
           params.model,
@@ -115,7 +115,7 @@ export const createPrismaRedisCache = ({
 
     // Only cache the data if the Prisma model hasn't been excluded and if the Prisma method wasn't excluded either
     if (
-      !defaultExcludeCacheModels?.includes(params.model) &&
+      !excludeModels?.includes(params.model) &&
       excludedCacheMethods?.includes(params.action) &&
       typeof cacheFunction === "function"
     ) {

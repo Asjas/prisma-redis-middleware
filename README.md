@@ -86,13 +86,13 @@ const prismaClient = new Prisma.PrismaClient();
 prismaClient.$use(
   createPrismaRedisCache({
     models: [
-      { model: "User", cacheTime: 60, excludeCacheMethods: "findMany" },
+      { model: "User", cacheTime: 60, excludeMethods: "findMany" },
       { model: "Post", cacheTime: 180, cacheKey: "article" },
     ],
     storage: { type: "redis", options: { client: redis, invalidation: { referencesTTL: 300 }, log: console } },
-    defaultCacheTime: 300,
-    defaultExcludeCacheModels: ["Product", "Cart"],
-    defaultExcludeCacheMethods: ["count", "groupby"],
+    cacheTime: 300,
+    excludeModels: ["Product", "Cart"],
+    excludeMethods: ["count", "groupby"],
     onDedupe: (key) => {
       console.log("deduped", key);
     },
@@ -124,7 +124,7 @@ prismaClient.$use(
       { model: "Post", cacheTime: 180 },
     ],
     storage: { type: "memory", options: { invalidation: true, log: console } },
-    defaultCacheTime: 300,
+    cacheTime: 300,
     onDedupe: (key) => {
       console.log("deduped", key);
     },
@@ -151,17 +151,16 @@ Options:
 - `onError`: (optional) a function that is called every time there is a cache error.
 - `onHit`: (optional) a function that is called every time there is a hit in the cache.
 - `onMiss`: (optional) a function that is called every time the result is not in the cache.
-- `defaultCacheTime`: (optional) (number) the default time (in ms) to use for models that don't have a `cacheTime` value
-  set. Default is 0.
-- `defaultExcludeCacheModels`: (optional) (string) an array of models to exclude from being cached.
-- `defaultExcludeCacheMethods`: (optional) (string) an array of Prisma methods to exclude from being cached for all
-  models.
+- `cacheTime`: (optional) (number) the default time (in ms) to use for models that don't have a `cacheTime` value set.
+  Default is 0.
+- `excludeModels`: (optional) (string) an array of models to exclude from being cached.
+- `excludeMethods`: (optional) (string) an array of Prisma methods to exclude from being cached for all models.
 - `models`: (optional) an array of Prisma models. Models options are:
 
   - `model`: (required) string.
   - `cacheKey`: (optional) string. Default is the model value.
   - `cacheTime`: (optional) number (in ms).
-  - `excludeCacheMethods`: (optional) (string) an array of Prisma methods to exclude from being cached for this model.
+  - `excludeMethods`: (optional) (string) an array of Prisma methods to exclude from being cached for this model.
 
     Example:
 
@@ -169,9 +168,9 @@ Options:
     createPrismaRedisCache({
       models: [
         { model: "User", cacheTime: 60 },
-        { model: "Post", cacheKey: "article", excludeCacheMethods: ["findFirst"] },
+        { model: "Post", cacheKey: "article", excludeMethods: ["findFirst"] },
       ],
-      defaultCacheTime: 300,
+      cacheTime: 300,
     });
     ```
 

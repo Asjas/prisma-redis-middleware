@@ -61,7 +61,7 @@ export type CreatePrismaRedisCache = {
     model: string;
     cacheKey?: string;
     cacheTime?: number;
-    excludeCacheMethods?: PrismaQueryAction[];
+    excludeMethods?: PrismaQueryAction[];
   }[];
   storage?:
     | {
@@ -72,9 +72,9 @@ export type CreatePrismaRedisCache = {
         type: "memory";
         options?: MemoryStorageOptions;
       };
-  defaultCacheTime?: number;
-  defaultExcludeCacheModels?: string[];
-  defaultExcludeCacheMethods?: PrismaQueryAction[];
+  cacheTime?: number;
+  excludeModels?: string[];
+  excludeMethods?: PrismaQueryAction[];
   onError?: (key: string) => void;
   onHit?: (key: string) => void;
   onMiss?: (key: string) => void;
