@@ -1,33 +1,19 @@
 {
   "name": "prisma-redis-middleware",
-  "main": "src/index.ts",
-  "description": "Prisma Middleware for caching results of queries in Redis",
+  "description": "Example of using Prisma Redis Middleware for caching results of queries in Redis",
   "engines": {
-    "node": "^12.x || ^14.x || ^16.x",
-    "npm": ">= 7.x"
+    "node": "^14.x || ^16.x",
+    "npm": "^7.x || ^8.x"
   },
-  "type": "module",
-  "files": [
-    "dist"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Asjas/prisma-redis-middleware.git"
-  },
-  "keywords": [
-    "prisma",
-    "redis",
-    "prisma-caching",
-    "redis-caching",
-    "prisma-middleware",
-    "caching"
-  ],
   "author": "A-J Roos <asjas@hey.com>",
-  "license": "MIT",
+  "license": "Hippocratic-3.0",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "source": "./src/index.ts",
   "scripts": {
     "build": "npm run clean && tsc",
-    "dev": "nodemon -- --inspect src/index.js",
-    "clean": "rimraf dist",
+    "dev": "nodemon",
+    "clean": "rimraf dist && rimraf prisma/dev.db",
     "start": "node dist/index.js",
     "prisma:generate": "prisma generate",
     "prisma:migrate:dev": "prisma migrate dev"
@@ -42,6 +28,7 @@
     "@types/ioredis": "4.28.10",
     "@types/node": "17.0.22",
     "nodemon": "2.0.15",
+    "rimraf": "3.0.2",
     "ts-node": "10.7.0",
     "typescript": "4.6.2"
   }
