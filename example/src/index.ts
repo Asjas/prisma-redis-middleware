@@ -1,6 +1,7 @@
 const { PrismaClient } = require("@prisma/client");
 const { createPrismaRedisCache } = require("prisma-redis-middleware");
 const Redis = require("ioredis");
+const logger = require("pino")({ level: "debug" });
 
 const redis = new Redis(); // Uses default options for Redis connection
 const prisma = new PrismaClient();
@@ -10,7 +11,7 @@ const cacheMiddleware = createPrismaRedisCache({
     { model: "User", cacheTime: 300 },
     { model: "Post", cacheKey: "Article" },
   ],
-  storage: { type: "redis", options: { client: redis, invalidation: { referencesTTL: 300 } } },
+  storage: { type: "redis", options: { client: redis, invalidation: { invalidationTTL: 300 } } },
   cacheTime: 60,
   onHit: (key: string) => {
     console.log("Hit: ✅", key);
