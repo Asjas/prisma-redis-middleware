@@ -1,0 +1,15 @@
+{
+  "extends": ["eslint-config-asjas/node-typescript"],
+  "parserOptions": {
+    "tsconfigRootDir": ".",
+    "project": "tsconfig.json"
+  },
+  "rules": {
+    "no-shadow": 0,
+    "no-console": 0,
+    "node/no-unpublished-require": 0,
+    "testing-library/no-debug": 0,
+    "@typescript-eslint/no-shadow": 0,
+    "@typescript-eslint/no-var-requires": 0
+  }
+}
