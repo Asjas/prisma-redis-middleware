@@ -273,3 +273,40 @@ test("should invalidate a single Prisma model cache after data mutation", async 
   // Test that we keep other cached queries that shouldn't be cleared
   expect(JSON.parse((await redis.get(cacheKey2)) as string)).toMatchObject(dbValue);
 });
+
+test("should not invalidate a Prisma model if cache method is excluded", async () => {
+  const middleware = createPrismaRedisCache({
+    storage: { type: "redis", options: { client: redis, invalidation: true } },
+    cacheTime,
+    excludeMethods: ["findFirst"],
+  });
+
+  // Run a "fake" User Prisma query
+  await middleware(
+    {
+      args,
+      action: action1,
+      model: model1,
+      dataPath: [],
+      runInTransaction: false,
+    },
+    next,
+  );
+
+  // Run a "fake" Post Prisma query
+  await middleware(
+    {
+      args,
+      action: action2,
+      model: model1,
+      dataPath: [],
+      runInTransaction: false,
+    },
+    next,
+  );
+
+  // Test if the cached query was fetched from the cache
+  expect(JSON.parse((await redis.get(cacheKey1)) as string)).toMatchObject(dbValue);
+  // Test that the excluded cache method was not cached
+  assert.equal(JSON.parse((await redis.get(cacheKey2)) as string), null);
+});
