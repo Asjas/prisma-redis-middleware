@@ -86,13 +86,13 @@ const prismaClient = new Prisma.PrismaClient();
 prismaClient.$use(
   createPrismaRedisCache({
     models: [
-      { model: "User", cacheTime: 60, excludeMethods: "findMany" },
+      { model: "User", cacheTime: 60, excludeMethods: ["findMany"] },
       { model: "Post", cacheTime: 180, cacheKey: "article" },
     ],
     storage: { type: "redis", options: { client: redis, invalidation: { referencesTTL: 300 }, log: console } },
     cacheTime: 300,
     excludeModels: ["Product", "Cart"],
-    excludeMethods: ["count", "groupby"],
+    excludeMethods: ["count", "groupBy"],
     onDedupe: (key) => {
       console.log("deduped", key);
     },
