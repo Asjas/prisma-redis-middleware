@@ -19,7 +19,7 @@
     "prepare": "tsdx build",
     "test": "vitest run",
     "test:watch": "vitest -w",
-    "coverage": "vitest run --coverage",
+    "coverage": "c8 --reporter=lcov vitest run --coverage",
     "check-types": "tsc",
     "lint": "eslint --ext .ts .",
     "lint-fix": "npm run lint -- --fix",
