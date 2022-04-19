@@ -37,7 +37,7 @@ export type MiddlewareParams = {
 };
 
 // https://www.prisma.io/docs/reference/api-reference/prisma-client-reference#use
-export type Middleware<T = Result> = (
+export type Middleware<T = any> = (
   params: MiddlewareParams,
   next: (params: MiddlewareParams) => Promise<T>,
 ) => Promise<T>;
