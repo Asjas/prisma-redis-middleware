@@ -37,7 +37,7 @@
   "devDependencies": {
     "@size-limit/preset-small-lib": "7.0.8",
     "@types/ioredis-mock": "5.6.0",
-    "c8": "7.11.0",
+    "c8": "7.11.2",
     "eslint-config-asjas": "2.0.3",
     "husky": "7.0.4",
     "ioredis-mock": "7.2.0",
