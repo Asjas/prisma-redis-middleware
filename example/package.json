@@ -22,7 +22,7 @@
     "ioredis": "5.0.4",
     "pino": "7.11.0",
     "prisma": "3.13.0",
-    "prisma-redis-middleware": "3.2.0"
+    "prisma-redis-middleware": "3.3.0"
   },
   "devDependencies": {
     "@prisma/client": "3.13.0",
