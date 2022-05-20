@@ -48,7 +48,7 @@
     "tsdx": "0.14.1",
     "tslib": "2.4.0",
     "typescript": "4.6.4",
-    "vitest": "0.12.6"
+    "vitest": "0.12.7"
   },
   "husky": {
     "hooks": {
