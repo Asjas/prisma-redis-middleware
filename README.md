@@ -34,7 +34,9 @@ The latest versions of the following Node.js versions are tested and supported.
 Here is a list of all the Prisma methods that are currently cached by default in `prisma-redis-middleware`.
 
 - findUnique
+- findUniqueOrThrow
 - findFirst
+- findFirstOrThrow
 - findMany
 - count
 - aggregate
