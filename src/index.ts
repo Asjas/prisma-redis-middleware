@@ -2,16 +2,7 @@ import { createCache } from "async-cache-dedupe";
 
 import { defaultCacheMethods, defaultMutationMethods } from "./cacheMethods";
 
-import type {
-  CreatePrismaRedisCache,
-  FetchFromPrisma,
-  Middleware,
-  MiddlewareParams,
-  PrismaAction,
-  PrismaQueryAction,
-  PrismaMutationAction,
-  Result,
-} from "./types";
+import * as Prisma from "./types";
 
 const DEFAULT_CACHE_TIME = 0;
 
@@ -25,7 +16,7 @@ export const createPrismaRedisCache = ({
   cacheTime = DEFAULT_CACHE_TIME,
   excludeModels = [],
   excludeMethods = [],
-}: CreatePrismaRedisCache) => {
+}: Prisma.CreatePrismaRedisCache) => {
   // Default options for "async-cache-dedupe"
   const cacheOptions = {
     onDedupe,
@@ -37,17 +28,17 @@ export const createPrismaRedisCache = ({
   };
 
   // Do not cache any Prisma method specified in the defaultExcludeCacheMethods option
-  const excludedCacheMethods: PrismaAction[] = defaultCacheMethods.filter((cacheMethod) => {
+  const excludedCacheMethods: Prisma.PrismaAction[] = defaultCacheMethods.filter((cacheMethod) => {
     return !excludeMethods.includes(cacheMethod);
   });
 
   const cache: any = createCache(cacheOptions);
 
-  const middleware: Middleware = async (params, next) => {
-    let result: Result;
+  const middleware: Prisma.Middleware = async (params, next) => {
+    let result: Prisma.Result;
 
     // This function is used by `async-cache-dedupe` to fetch data when the cache is empty
-    const fetchFromPrisma: FetchFromPrisma = async (params) => {
+    const fetchFromPrisma: Prisma.FetchFromPrisma = async (params) => {
       return next(params);
     };
 
@@ -60,17 +51,23 @@ export const createPrismaRedisCache = ({
           !cache[model] &&
           params.model &&
           !excludeModels?.includes(params.model) &&
-          !excludeMethods?.includes(params.action as PrismaQueryAction)
+          !excludeMethods?.includes(params.action as Prisma.PrismaQueryAction)
         ) {
           cache.define(
             model,
             {
-              references: ({ params }: { params: MiddlewareParams }, key: string, result: Result) => {
+              references: ({ params }: { params: Prisma.MiddlewareParams }, key: string, result: Prisma.Result) => {
                 return result ? [`${cacheKey || params.model}~${key}`] : null;
               },
               ttl: cacheTime || cacheOptions.ttl,
             },
-            async function modelsFetch({ cb, params }: { cb: FetchFromPrisma; params: MiddlewareParams }) {
+            async function modelsFetch({
+              cb,
+              params,
+            }: {
+              cb: Prisma.FetchFromPrisma;
+              params: Prisma.MiddlewareParams;
+            }) {
               result = await cb(params);
 
               return result;
@@ -95,16 +92,16 @@ export const createPrismaRedisCache = ({
         params.model &&
         !cache[params.model] &&
         !excludeModels?.includes(params.model) &&
-        !excludedCacheMethodsInModels?.excludeMethods?.includes(params.action as PrismaQueryAction)
+        !excludedCacheMethodsInModels?.excludeMethods?.includes(params.action as Prisma.PrismaQueryAction)
       ) {
         cache.define(
           params.model,
           {
-            references: ({ params }: { params: MiddlewareParams }, key: string, result: Result) => {
+            references: ({ params }: { params: Prisma.MiddlewareParams }, key: string, result: Prisma.Result) => {
               return result ? [`${params.model}~${key}`] : null;
             },
           },
-          async function modelFetch({ cb, params }: { cb: FetchFromPrisma; params: MiddlewareParams }) {
+          async function modelFetch({ cb, params }: { cb: Prisma.FetchFromPrisma; params: Prisma.MiddlewareParams }) {
             result = await cb(params);
 
             return result;
@@ -136,7 +133,7 @@ export const createPrismaRedisCache = ({
       result = await fetchFromPrisma(params);
 
       // If we successfully executed the Mutation we clear and invalidate the cache for the Prisma model
-      if (defaultMutationMethods.includes(params.action as PrismaMutationAction)) {
+      if (defaultMutationMethods.includes(params.action as Prisma.PrismaMutationAction)) {
         await cache.invalidateAll(`${params.model}~*`);
       }
     }

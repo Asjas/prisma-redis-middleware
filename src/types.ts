@@ -29,12 +29,14 @@ export type PrismaAction = PrismaQueryAction | PrismaMutationAction;
 
 export type Result = Record<string, unknown> | Record<string, unknown>[];
 
+export type ModelName = "ModelName";
+
 /**
  * These options are being passed in to the middleware as "params"
  * https://www.prisma.io/docs/reference/api-reference/prisma-client-reference#params
  */
 export type MiddlewareParams = {
-  model?: string;
+  model?: ModelName;
   action: PrismaAction;
   args: any;
   dataPath: string[];
