@@ -121,9 +121,9 @@ describe.each<{
     assert.equal(JSON.parse((await redis.get(cacheKey)) as string), null);
   });
 
-  test("should exclude Prisma action from being cached with excludeCacheMethods", async () => {
+  test("should exclude Prisma action from being cached with excludeMethods", async () => {
     const middleware = createPrismaRedisCache({
-      models: [{ model: model1, excludeMethods: [action1] }],
+      models: [{ model: model1, cacheTime, excludeMethods: [action1] }],
       storage: { type: "redis", options: { client: redis } },
       cacheTime,
     });
