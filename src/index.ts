@@ -58,6 +58,7 @@ export const createPrismaRedisCache = ({
         // Only define the cache function for a model if it doesn't exist yet and hasn't been excluded
         if (
           !cache[model] &&
+          params.model &&
           !excludeModels?.includes(params.model) &&
           !excludeMethods?.includes(params.action as PrismaQueryAction)
         ) {
@@ -91,6 +92,7 @@ export const createPrismaRedisCache = ({
       // Do not define the cache function for a model if it was excluded in `defaultExcludeCacheModels`
       // Do not define a cache function if the Prisma method was exluded in `models`
       if (
+        params.model &&
         !cache[params.model] &&
         !excludeModels?.includes(params.model) &&
         !excludedCacheMethodsInModels?.excludeMethods?.includes(params.action as PrismaQueryAction)
@@ -112,10 +114,11 @@ export const createPrismaRedisCache = ({
     }
 
     // Get the cache function relating to the Prisma model
-    const cacheFunction = cache[params.model];
+    const cacheFunction = params.model && cache[params.model];
 
     // Only cache the data if the Prisma model hasn't been excluded and if the Prisma method wasn't excluded either
     if (
+      params.model &&
       !excludeModels?.includes(params.model) &&
       excludedCacheMethods?.includes(params.action) &&
       typeof cacheFunction === "function"

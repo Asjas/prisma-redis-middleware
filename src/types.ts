@@ -31,7 +31,7 @@ export type Result = Record<string, unknown> | Record<string, unknown>[];
  * https://www.prisma.io/docs/reference/api-reference/prisma-client-reference#params
  */
 export type MiddlewareParams = {
-  model: string;
+  model?: string;
   action: PrismaAction;
   args: any;
   dataPath: string[];
@@ -60,7 +60,7 @@ export type MemoryStorageOptions = {
 
 export type CreatePrismaRedisCache = {
   models?: {
-    model?: string;
+    model: string;
     cacheKey?: string;
     cacheTime?: number;
     excludeMethods?: PrismaQueryAction[];
