@@ -55,92 +55,76 @@ Install the package using `npm`:
 npm i --save-exact prisma-redis-middleware
 ```
 
-or `yarn`:
-
-```sh
-yarn add prisma-redis-middleware
-```
-
-or `pnpm`:
-
-```sh
-pnpm add --save-exact prisma-redis-middleware
-```
-
 _You will also need to install and configure an external dependency for `Redis` (for example: `ioredis` or one that uses
 a similar API) if you don't already have a Redis Client in your project._
 
 ```sh
-npm i --save-exact ioredis
+npm i --save-exact ioredis @types/ioredis
 ```
 
 ## Code Example (ESM / Import)
 
 ```mjs
-import Prisma from "@prisma/client";
+import Prisma from "prisma";
+import { PrismaClient } from "@prisma/client";
 import { createPrismaRedisCache } from "prisma-redis-middleware";
 import Redis from "ioredis";
 
 const redis = new Redis(); // Uses default options for Redis connection
 
-const prismaClient = new Prisma.PrismaClient();
+const prisma = new PrismaClient();
 
-prismaClient.$use(
-  createPrismaRedisCache({
-    models: [
-      { model: "User", cacheTime: 60, excludeMethods: ["findMany"] },
-      { model: "Post", cacheTime: 180, cacheKey: "article" },
-    ],
-    storage: { type: "redis", options: { client: redis, invalidation: { referencesTTL: 300 }, log: console } },
-    cacheTime: 300,
-    excludeModels: ["Product", "Cart"],
-    excludeMethods: ["count", "groupBy"],
-    onDedupe: (key) => {
-      console.log("deduped", key);
-    },
-    onHit: (key) => {
-      console.log("hit", key);
-    },
-    onMiss: (key) => {
-      console.log("miss", key);
-    },
-    onError: (key) => {
-      console.log("error", key);
-    },
-  }),
-);
+const cacheMiddleware: Prisma.Middleware = createPrismaRedisCache({
+  models: [
+    { model: "User", excludeMethods: ["findMany"] },
+    { model: "Post", cacheTime: 180, cacheKey: "article" },
+  ],
+  storage: { type: "redis", options: { client: redis, invalidation: { referencesTTL: 300 }, log: console } },
+  cacheTime: 300,
+  excludeModels: ["Product", "Cart"],
+  excludeMethods: ["count", "groupBy"],
+  onHit: (key) => {
+    console.log("hit", key);
+  },
+  onMiss: (key) => {
+    console.log("miss", key);
+  },
+  onError: (key) => {
+    console.log("error", key);
+  },
+});
+
+prisma.$use(cacheMiddleware);
 ```
 
 ## Code Example (Common JS / Require)
 
 ```js
+const Prisma = require("prisma");
 const { PrismaClient } = require("@prisma/client");
 const { createPrismaRedisCache } = require("prisma-redis-middleware");
 
-const prismaClient = new PrismaClient();
+const prisma = new PrismaClient();
 
-prismaClient.$use(
-  createPrismaRedisCache({
-    models: [
-      { model: "User", cacheTime: 60 },
-      { model: "Post", cacheTime: 180 },
-    ],
-    storage: { type: "memory", options: { invalidation: true, log: console } },
-    cacheTime: 300,
-    onDedupe: (key) => {
-      console.log("deduped", key);
-    },
-    onHit: (key) => {
-      console.log("hit", key);
-    },
-    onMiss: (key) => {
-      console.log("miss", key);
-    },
-    onError: (key) => {
-      console.log("error", key);
-    },
-  }),
-);
+const cacheMiddleware: Prisma.Middleware = createPrismaRedisCache({
+  models: [
+    { model: "User", cacheTime: 60 },
+    { model: "Post", cacheTime: 180 },
+  ],
+  storage: { type: "memory", options: { invalidation: true, log: console } },
+  cacheTime: 300,
+  onHit: (key) => {
+    console.log("hit", key);
+  },
+  onMiss: (key) => {
+    console.log("miss", key);
+  },
+  onError: (key) => {
+    console.log("error", key);
+  },
+});
+
+prisma.$use(cacheMiddleware);
 ```
 
 ## API
@@ -172,7 +156,6 @@ Options:
         { model: "User", cacheTime: 60 },
         { model: "Post", cacheKey: "article", excludeMethods: ["findFirst"] },
       ],
-      cacheTime: 300,
     });
     ```
 
@@ -206,10 +189,12 @@ Options:
       Example
 
       ```js
+      const redis = new Redis();
+
       createPrismaRedisCache({
         storage: {
           type: "redis",
-          options: { client: new Redis(), invalidation: { referencesTTL: 60 }, log: console },
+          options: { client: redis, invalidation: { referencesTTL: 60 }, log: console },
         },
       });
       ```
