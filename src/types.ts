@@ -10,6 +10,7 @@ export type PrismaQueryAction =
   | "count"
   | "groupBy"
   | "findRaw"
+  | "runCommandRaw"
   | "queryRaw"
   | "aggregateRaw";
 
