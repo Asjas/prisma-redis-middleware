@@ -20,6 +20,7 @@ export type PrismaMutationAction =
   | "upsert"
   | "delete"
   | "deleteMany"
+  | "executeRaw"
   | "executeRawUnsafe";
 
 export type PrismaAction = PrismaQueryAction | PrismaMutationAction;
