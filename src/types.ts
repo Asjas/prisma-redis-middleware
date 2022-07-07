@@ -1,4 +1,4 @@
-import type Redis from "ioredis";
+import type { RedisOptions } from "ioredis";
 
 export type PrismaQueryAction =
   | "findFirst"
@@ -45,7 +45,7 @@ export type Middleware<T = any> = (
 export type FetchFromPrisma = (params: MiddlewareParams) => Promise<Result>;
 
 export type RedisMemoryOptions = {
-  client: Redis;
+  client: RedisOptions;
   invalidation?: boolean | { referencesTTL?: number };
   log?: any;
 };
