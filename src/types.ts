@@ -10,6 +10,7 @@ export type PrismaQueryAction =
   | "count"
   | "groupBy"
   | "findRaw"
+  | "queryRaw"
   | "aggregateRaw";
 
 export type PrismaMutationAction =
