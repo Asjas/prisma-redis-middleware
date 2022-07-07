@@ -58,7 +58,7 @@ export type MemoryStorageOptions = {
 
 export type CreatePrismaRedisCache = {
   models?: {
-    model: string;
+    model?: string;
     cacheKey?: string;
     cacheTime?: number;
     excludeMethods?: PrismaQueryAction[];
