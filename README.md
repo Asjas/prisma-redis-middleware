@@ -26,8 +26,8 @@ Uses [async-cache-dedupe](https://github.com/mcollina/async-cache-dedupe).
 
 The latest versions of the following Node.js versions are tested and supported.
 
-- 14
 - 16
+- 18
 
 ## Default Cached Methods
 
@@ -62,7 +62,7 @@ yarn add prisma-redis-middleware
 or `pnpm`:
 
 ```sh
-pnpm add prisma-redis-middleware
+pnpm add --save-exact prisma-redis-middleware
 ```
 
 _You will also need to install and configure an external dependency for `Redis` (for example: `ioredis` or one that uses
