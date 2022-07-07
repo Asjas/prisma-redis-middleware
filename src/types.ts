@@ -1,4 +1,4 @@
-import type { RedisOptions } from "ioredis";
+import type Redis from "ioredis";
 
 export type PrismaQueryAction =
   | "findFirst"
@@ -29,14 +29,12 @@ export type PrismaAction = PrismaQueryAction | PrismaMutationAction;
 
 export type Result = Record<string, unknown> | Record<string, unknown>[];
 
-export type ModelName = "ModelName";
-
 /**
  * These options are being passed in to the middleware as "params"
  * https://www.prisma.io/docs/reference/api-reference/prisma-client-reference#params
  */
 export type MiddlewareParams = {
-  model?: ModelName;
+  model: string;
   action: PrismaAction;
   args: any;
   dataPath: string[];
@@ -52,7 +50,7 @@ export type Middleware<T = any> = (
 export type FetchFromPrisma = (params: MiddlewareParams) => Promise<Result>;
 
 export type RedisMemoryOptions = {
-  client: RedisOptions;
+  client: Redis;
   invalidation?: boolean | { referencesTTL?: number };
   log?: any;
 };
