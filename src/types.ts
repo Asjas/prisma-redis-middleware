@@ -2,7 +2,9 @@ import type { RedisOptions } from "ioredis";
 
 export type PrismaQueryAction =
   | "findFirst"
+  | "findFirstOrThrow"
   | "findUnique"
+  | "findUniqueOrThrow"
   | "findMany"
   | "aggregate"
   | "count"
