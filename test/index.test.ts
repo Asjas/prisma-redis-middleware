@@ -121,24 +121,12 @@ describe.each<{
     assert.equal(JSON.parse((await redis.get(cacheKey)) as string), null);
   });
 
-  test("should exclude Prisma action from being cached with excludeMethods", async () => {
+  test("should exclude Prisma action from being cached with individual model excludeMethods", async () => {
     const middleware = createPrismaRedisCache({
       models: [{ model: model1, cacheTime, excludeMethods: [action1] }],
       storage: { type: "redis", options: { client: redis } },
       cacheTime,
     });
-
-    // Run a "fake" User Prisma query
-    await middleware(
-      {
-        args,
-        action: action1,
-        model: model1,
-        dataPath: [],
-        runInTransaction: false,
-      },
-      next,
-    );
 
     // Run a "fake" Post Prisma query
     await middleware(
@@ -152,12 +140,24 @@ describe.each<{
       next,
     );
 
+    // Run a "fake" User Prisma query
+    await middleware(
+      {
+        args,
+        action: action1,
+        model: model1,
+        dataPath: [],
+        runInTransaction: false,
+      },
+      next,
+    );
+
     // Test if the query was skipped and does not exist in cache
     assert.equal(JSON.parse((await redis.get(cacheKey1)) as string), null);
     expect(JSON.parse((await redis.get(cacheKey2)) as string)).toMatchObject(dbValue);
   });
 
-  test("should exclude a Prisma method from being cached with defaultExcludeCacheMethods", async () => {
+  test("should exclude a Prisma method from being cached with default excludeMethods", async () => {
     const middleware = createPrismaRedisCache({
       models: [{ model: model1 }],
       storage: { type: "redis", options: { client: redis } },
@@ -195,7 +195,7 @@ describe.each<{
     expect(JSON.parse((await redis.get(cacheKey2)) as string)).toMatchObject(dbValue);
   });
 
-  test("should exclude a Prisma model from being cached with defaultExcludeCacheModels", async () => {
+  test("should exclude a Prisma model from being cached with excludeModels", async () => {
     const middleware = createPrismaRedisCache({
       storage: { type: "redis", options: { client: redis } },
       cacheTime,
@@ -308,7 +308,7 @@ describe.each<{
       {
         args,
         action: action2,
-        model: model1,
+        model: model2,
         dataPath: [],
         runInTransaction: false,
       },
