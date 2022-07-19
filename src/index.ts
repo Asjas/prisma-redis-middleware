@@ -36,11 +36,6 @@ export const createPrismaRedisCache = ({
     ttl: cacheTime,
   };
 
-  // Do not cache any Prisma method specified in the defaultExcludeCacheMethods option
-  const excludedCacheMethods: PrismaAction[] = defaultCacheMethods.filter((cacheMethod) => {
-    return !excludeMethods.includes(cacheMethod);
-  });
-
   const cache: any = createCache(cacheOptions);
 
   const middleware: Middleware = async (params, next) => {
@@ -51,13 +46,19 @@ export const createPrismaRedisCache = ({
       return next(params);
     };
 
+    // Do not cache any Prisma method specified in the defaultExcludeCacheMethods option
+    const excludedCacheMethods: PrismaAction[] = defaultCacheMethods.filter((cacheMethod) => {
+      return excludeMethods.includes(cacheMethod);
+    });
+
     // Do not cache any Prisma method that has been excluded
-    if (excludedCacheMethods?.includes(params.action)) {
+    if (!excludedCacheMethods?.includes(params.action)) {
       // Add a cache function for each model specified in the models option
       models?.forEach(({ model, cacheTime, cacheKey, excludeMethods }) => {
         // Only define the cache function for a model if it doesn't exist yet and hasn't been excluded
         if (
           !cache[model] &&
+          model === params.model &&
           !excludeModels?.includes(params.model) &&
           !excludeMethods?.includes(params.action as PrismaQueryAction)
         ) {
@@ -117,7 +118,8 @@ export const createPrismaRedisCache = ({
     // Only cache the data if the Prisma model hasn't been excluded and if the Prisma method wasn't excluded either
     if (
       !excludeModels?.includes(params.model) &&
-      excludedCacheMethods?.includes(params.action) &&
+      !excludedCacheMethods?.includes(params.action) &&
+      !defaultMutationMethods?.includes(params.action as PrismaMutationAction) &&
       typeof cacheFunction === "function"
     ) {
       try {
