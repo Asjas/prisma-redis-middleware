@@ -32,7 +32,7 @@
   },
   "dependencies": {
     "async-cache-dedupe": "1.4.0",
-    "ioredis": "5.2.1"
+    "ioredis": "5.2.2"
   },
   "devDependencies": {
     "@size-limit/preset-small-lib": "7.0.8",
