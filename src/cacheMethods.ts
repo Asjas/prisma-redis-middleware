@@ -13,7 +13,6 @@ export const defaultCacheMethods: PrismaQueryAction[] = [
 
 export const defaultMutationMethods: PrismaMutationAction[] = [
   "create",
-  "create",
   "createMany",
   "update",
   "updateMany",
