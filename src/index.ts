@@ -136,7 +136,7 @@ export const createPrismaRedisCache = ({
 
       // If we successfully executed the Mutation we clear and invalidate the cache for the Prisma model
       if (defaultMutationMethods.includes(params.action as PrismaMutationAction)) {
-        await cache.invalidateAll(`${params.model}~*`);
+        await cache.invalidateAll(`*${params.model}~*`);
       }
     }
 
