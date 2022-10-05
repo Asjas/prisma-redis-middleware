@@ -1,4 +1,5 @@
 import type Redis from "ioredis";
+import type { Prisma } from "@prisma/client";
 
 export type PrismaQueryAction =
   | "findFirst"
@@ -78,7 +79,7 @@ export type CreatePrismaRedisCache = {
         options?: MemoryStorageOptions;
       };
   cacheTime?: number;
-  excludeModels?: string[];
+  excludeModels?: string[] | Prisma.ModelName[];
   excludeMethods?: PrismaQueryAction[];
   onError?: (key: string) => void;
   onHit?: (key: string) => void;
