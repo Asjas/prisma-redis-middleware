@@ -1,4 +1,5 @@
 import type Redis from "ioredis";
+import type { Prisma } from "@prisma/client";
 
 export type PrismaQueryAction =
   | "findFirst"
@@ -33,13 +34,7 @@ export type Result = Record<string, unknown> | Record<string, unknown>[];
  * These options are being passed in to the middleware as "params"
  * https://www.prisma.io/docs/reference/api-reference/prisma-client-reference#params
  */
-export type MiddlewareParams = {
-  model: string;
-  action: PrismaAction;
-  args: any;
-  dataPath: string[];
-  runInTransaction: boolean;
-};
+export type MiddlewareParams = Prisma.MiddlewareParams;
 
 // https://www.prisma.io/docs/reference/api-reference/prisma-client-reference#use
 export type Middleware<T = any> = (
@@ -78,7 +73,7 @@ export type CreatePrismaRedisCache = {
         options?: MemoryStorageOptions;
       };
   cacheTime?: number;
-  excludeModels?: string[];
+  excludeModels?: string[] | Prisma.ModelName[];
   excludeMethods?: PrismaQueryAction[];
   onError?: (key: string) => void;
   onHit?: (key: string) => void;
