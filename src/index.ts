@@ -65,8 +65,8 @@ export const createPrismaRedisCache = ({
           cache.define(
             model,
             {
-              references: ({ params }: { params: MiddlewareParams }, key: string, result: Result) => {
-                return result ? [`${cacheKey || params.model}~${key}`] : null;
+              references: ({ params }: { params: MiddlewareParams }, key: string) => {
+                return [`${cacheKey || params.model}~${key}`];
               },
               ttl: cacheTime || cacheOptions.ttl,
             },
@@ -99,8 +99,8 @@ export const createPrismaRedisCache = ({
         cache.define(
           params.model,
           {
-            references: ({ params }: { params: MiddlewareParams }, key: string, result: Result) => {
-              return result ? [`${params.model}~${key}`] : null;
+            references: ({ params }: { params: MiddlewareParams }, key: string) => {
+              return [`${params.model}~${key}`];
             },
           },
           async function modelFetch({ cb, params }: { cb: FetchFromPrisma; params: MiddlewareParams }) {
