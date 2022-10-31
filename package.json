@@ -38,7 +38,7 @@
     "@prisma/client": "4.5.0",
     "@size-limit/preset-small-lib": "8.1.0",
     "@types/ioredis-mock": "8.2.0",
-    "@vitest/coverage-c8": "0.24.3",
+    "@vitest/coverage-c8": "0.24.4",
     "c8": "7.12.0",
     "eslint-config-asjas": "2.0.3",
     "husky": "8.0.1",
@@ -50,7 +50,7 @@
     "tsdx": "0.14.1",
     "tslib": "2.4.0",
     "typescript": "4.8.4",
-    "vitest": "0.24.3"
+    "vitest": "0.24.4"
   },
   "husky": {
     "hooks": {
