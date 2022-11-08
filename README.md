@@ -137,7 +137,7 @@ Options:
 - `onError`: (optional) a function that is called every time there is a cache error.
 - `onHit`: (optional) a function that is called every time there is a hit in the cache.
 - `onMiss`: (optional) a function that is called every time the result is not in the cache.
-- `cacheTime`: (optional) (number) the default time (in ms) to use for models that don't have a `cacheTime` value set.
+- `cacheTime`: (optional) (number) the default time (in seconds) to use for models that don't have a `cacheTime` value set.
   Default is 0.
 - `excludeModels`: (optional) (string) an array of models to exclude from being cached.
 - `excludeMethods`: (optional) (string) an array of Prisma methods to exclude from being cached for all models.
@@ -145,7 +145,7 @@ Options:
 
   - `model`: (required) string.
   - `cacheKey`: (optional) string. Default is the model value.
-  - `cacheTime`: (optional) number (in ms).
+  - `cacheTime`: (optional) number (in seconds).
   - `excludeMethods`: (optional) (string) an array of Prisma methods to exclude from being cached for this model.
 
     Example:
