@@ -78,7 +78,7 @@
   ],
   "engines": {
     "node": "^16.x || ^18.x",
-    "npm": " ^7.x || ^8.x"
+    "npm": "^7.x || ^8.x || ^9.0.0"
   },
   "repository": {
     "type": "git",
