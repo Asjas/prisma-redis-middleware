@@ -3,7 +3,7 @@
   "description": "Example of using Prisma Redis Middleware for caching results of queries in Redis",
   "engines": {
     "node": "^14.x || ^16.x || ^18.0.0",
-    "npm": "^7.x || ^8.x"
+    "npm": "^7.x || ^8.x || ^9.0.0"
   },
   "author": "A-J Roos <asjas@hey.com>",
   "license": "Hippocratic-3.0",
