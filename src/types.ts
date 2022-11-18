@@ -56,6 +56,8 @@ export type MemoryStorageOptions = {
   log?: any;
 };
 
+export type TtlFunction = (data: any) => number;
+
 export type CreatePrismaRedisCache = {
   models?: {
     model: string;
@@ -72,7 +74,7 @@ export type CreatePrismaRedisCache = {
         type: "memory";
         options?: MemoryStorageOptions;
       };
-  cacheTime?: number;
+  cacheTime?: number | TtlFunction;
   excludeModels?: string[] | Prisma.ModelName[];
   excludeMethods?: PrismaQueryAction[];
   onError?: (key: string) => void;
