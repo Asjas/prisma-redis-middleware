@@ -81,11 +81,7 @@ export const createPrismaRedisCache = ({
 
       // For each defined model in `models` we check if they defined any caching methods to be excluded
       const excludedCacheMethodsInModels = models?.find(({ model, excludeMethods }) => {
-        if (model === params.model && excludeMethods?.length) {
-          return true;
-        }
-
-        return false;
+        return model === params.model && excludeMethods?.length;
       });
 
       // Do not define a cache function for any Prisma model if it already exists
@@ -137,6 +133,18 @@ export const createPrismaRedisCache = ({
       // If we successfully executed the Mutation we clear and invalidate the cache for the Prisma model
       if (defaultMutationMethods.includes(params.action as PrismaMutationAction)) {
         await cache.invalidateAll(`*${params.model}~*`);
+
+        await Promise.all(
+          (models || [])
+            .filter(({ model }) => model === params.model)
+            .map(async ({ invalidateRelated }) => {
+              if (invalidateRelated) {
+                await Promise.all(
+                  invalidateRelated.map(async (relatedModel) => cache.invalidateAll(`*${relatedModel}~*`)),
+                );
+              }
+            }),
+        );
       }
     }
 

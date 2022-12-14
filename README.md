@@ -147,13 +147,14 @@ Options:
   - `cacheKey`: (optional) string. Default is the model value.
   - `cacheTime`: (optional) number (in seconds).
   - `excludeMethods`: (optional) (string) an array of Prisma methods to exclude from being cached for this model.
+  - `invalidateRelated`: (optional) (string) an array of Prisma models to invalidate when mutating this model.
 
     Example:
 
     ```js
     createPrismaRedisCache({
       models: [
-        { model: "User", cacheTime: 60 },
+        { model: "User", cacheTime: 60, invalidateRelated: ["Post"] },
         { model: "Post", cacheKey: "article", excludeMethods: ["findFirst"] },
       ],
     });
