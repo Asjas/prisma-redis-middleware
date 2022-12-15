@@ -20,7 +20,7 @@
   },
   "dependencies": {
     "ioredis": "5.2.4",
-    "pino": "8.7.0",
+    "pino": "8.8.0",
     "prisma": "4.7.1",
     "prisma-redis-middleware": "4.3.0"
   },
