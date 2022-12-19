@@ -20,14 +20,14 @@
   },
   "dependencies": {
     "ioredis": "5.2.4",
-    "pino": "8.7.0",
+    "pino": "8.8.0",
     "prisma": "4.7.1",
     "prisma-redis-middleware": "4.3.0"
   },
   "devDependencies": {
     "@prisma/client": "4.7.1",
     "@types/ioredis": "4.28.10",
-    "@types/node": "18.11.15",
+    "@types/node": "18.11.17",
     "nodemon": "2.0.20",
     "rimraf": "3.0.2",
     "ts-node": "10.9.1",
