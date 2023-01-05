@@ -35,7 +35,7 @@
     "ioredis": "5.2.4"
   },
   "devDependencies": {
-    "@prisma/client": "4.8.0",
+    "@prisma/client": "4.8.1",
     "@size-limit/preset-small-lib": "8.1.0",
     "@types/ioredis-mock": "8.2.1",
     "@vitest/coverage-c8": "0.26.3",
