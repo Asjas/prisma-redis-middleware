@@ -284,6 +284,63 @@ describe.each<{
     expect(JSON.parse((await redis.get(cacheKey2)) as string)).toMatchObject(dbValue);
   });
 
+  test("should invalidate a Prisma model cache and related Prisma models after data mutation", async () => {
+    const middleware = createPrismaRedisCache({
+      models: [
+        {
+          model: model1,
+          invalidateRelated: [model2],
+        },
+      ],
+      storage: { type: "redis", options: { client: redis, invalidation: true } },
+      cacheTime,
+    });
+
+    // Run a "fake" User Prisma query
+    await middleware(
+      {
+        args,
+        action: action1,
+        model: model1,
+        dataPath: [],
+        runInTransaction: false,
+      },
+      next,
+    );
+
+    // Run a "fake" Post Prisma query
+    await middleware(
+      {
+        args,
+        action: action2,
+        model: model2,
+        dataPath: [],
+        runInTransaction: false,
+      },
+      next,
+    );
+
+    // Test if data exists in the cache
+    expect(JSON.parse((await redis.get(cacheKey1)) as string)).toMatchObject(dbValue);
+    expect(JSON.parse((await redis.get(cacheKey2)) as string)).toMatchObject(dbValue);
+
+    // Run a "fake" User Prisma mutation
+    await middleware(
+      {
+        args,
+        action: "create",
+        model: model1,
+        dataPath: [],
+        runInTransaction: false,
+      },
+      next,
+    );
+
+    // Test if the cache was invalidated and cleared properly
+    assert.equal(JSON.parse((await redis.get(cacheKey1)) as string), null);
+    assert.equal(JSON.parse((await redis.get(cacheKey2)) as string), null);
+  });
+
   test("should not invalidate a Prisma model if cache method is excluded", async () => {
     const middleware = createPrismaRedisCache({
       storage: { type: "redis", options: { client: redis, invalidation: true } },

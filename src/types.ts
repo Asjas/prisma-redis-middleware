@@ -60,10 +60,11 @@ export type TtlFunction = (data: any) => number;
 
 export type CreatePrismaRedisCache = {
   models?: {
-    model: string;
+    model: string | Prisma.ModelName;
     cacheKey?: string;
     cacheTime?: number | TtlFunction;
     excludeMethods?: PrismaQueryAction[];
+    invalidateRelated?: string[] | Prisma.ModelName[];
   }[];
   storage?:
     | {

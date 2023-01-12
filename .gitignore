@@ -106,3 +106,6 @@ dist
 # Ignore Prisma SQLite database
 dev.db
 dev.db-journal
+
+# IntelliJ IDEA project files
+.idea
