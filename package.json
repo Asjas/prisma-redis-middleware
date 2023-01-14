@@ -32,7 +32,7 @@
   },
   "dependencies": {
     "async-cache-dedupe": "1.7.0",
-    "ioredis": "5.2.4"
+    "ioredis": "5.2.5"
   },
   "devDependencies": {
     "@prisma/client": "4.8.1",
