@@ -1,6 +1,8 @@
-import MockRedis from "ioredis-mock";
+import { afterEach, assert, describe, expect, test } from "vitest";
+
 import type Redis from "ioredis";
-import { describe, test, expect, afterEach, assert } from "vitest";
+
+import MockRedis from "ioredis-mock";
 
 import { createPrismaRedisCache } from "../src";
 

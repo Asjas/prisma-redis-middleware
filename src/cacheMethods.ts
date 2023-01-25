@@ -1,4 +1,4 @@
-import type { PrismaQueryAction, PrismaMutationAction } from "./types";
+import type { PrismaMutationAction, PrismaQueryAction } from "./types";
 
 export const defaultCacheMethods: PrismaQueryAction[] = [
   "findUnique",

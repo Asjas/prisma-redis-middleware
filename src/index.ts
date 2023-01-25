@@ -1,15 +1,14 @@
 import { createCache } from "async-cache-dedupe";
 
 import { defaultCacheMethods, defaultMutationMethods } from "./cacheMethods";
-
 import type {
   CreatePrismaRedisCache,
   FetchFromPrisma,
   Middleware,
   MiddlewareParams,
   PrismaAction,
-  PrismaQueryAction,
   PrismaMutationAction,
+  PrismaQueryAction,
   Result,
 } from "./types";
 

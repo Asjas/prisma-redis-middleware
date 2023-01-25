@@ -1,4 +1,5 @@
 import type Redis from "ioredis";
+
 import type { Prisma } from "@prisma/client";
 
 export type PrismaQueryAction =
