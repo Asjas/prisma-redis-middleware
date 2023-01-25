@@ -1,0 +1,2 @@
+# Set the default behavior, since Windows-based GitHub actions are cloning with CRLF as default
+* text eol=lf
