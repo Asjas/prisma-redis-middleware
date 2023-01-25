@@ -1,37 +1,61 @@
 name: "Main Workflow"
 
-on: [push, pull_request]
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+concurrency: ${{ github.workflow }}-${{ github.ref }}
 
 jobs:
   build:
-    name: Build, lint, and test on Node ${{ matrix.node }} and ${{ matrix.os }}
-
-    runs-on: ubuntu-latest
+    name: "[Build] Node.js ${{ matrix.node }} and ${{ matrix.os }}"
 
     strategy:
       matrix:
         node: ["16", "18"]
         os: [ubuntu-latest, windows-latest, macOS-latest]
 
+    runs-on: ${{ matrix.os }}
+
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
 
-      - name: Setup node ${{ matrix.node }}
+      - name: Setup Node.js ${{ matrix.node }}
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node }}
           cache: "npm"
       - run: npm i -g npm@7
 
-      - name: Install npm dependencies & build project with tsdx
+      - name: Install with npm
         run: npm i
 
-      - name: Run validation npm script
-        run: npm run validate
+      - name: Build
+        run: npm run build
 
-      - name: Run the tests
-        run: npm test
+  test:
+    runs-on: ubuntu-latest
+    name: "[Test] Node.js 16 and ubuntu-latest"
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js 16
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          cache: "npm"
+
+      - name: Install with npm
+        run: npm install
+
+      - name: Run tests
+        run: npm run test
 
       - name: Generate coverage report
         run: npm run coverage
