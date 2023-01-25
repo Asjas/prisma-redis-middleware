@@ -5,3 +5,6 @@ dist/
 
 # Ignore files for npm
 package-lock.json
+
+# [error] src/prisma-client.d.ts: SyntaxError: Export 'Prisma' is not defined. (44:11)
+src/prisma-client.d.ts
