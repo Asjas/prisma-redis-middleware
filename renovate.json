@@ -3,8 +3,8 @@
   "dependencyDashboard": false,
   "extends": ["config:base"],
   "timezone": "Africa/Johannesburg",
-  "assignees": ["asjas"],
-  "reviewers": ["asjas"],
+  "assignees": ["Asjas"],
+  "reviewers": ["Asjas"],
   "labels": ["renovate"],
   "rangeStrategy": "update-lockfile",
   "packageRules": [
