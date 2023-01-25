@@ -1,8 +1,27 @@
 {
-  "extends": ["config:base", ":disableDependencyDashboard"],
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "dependencyDashboard": false,
+  "extends": ["config:base"],
   "timezone": "Africa/Johannesburg",
+  "assignees": ["asjas"],
+  "reviewers": ["asjas"],
+  "labels": ["renovate"],
+  "rangeStrategy": "update-lockfile",
   "packageRules": [
-    { "matchPackagePatterns": ["*"], "matchCurrentVersion": "!/^0/", "rebaseWhen": "auto", "automerge": true },
-    { "matchPackagePatterns": ["@types"], "groupName": "types", "rebaseWhen": "auto", "automerge": true }
-  ]
+    {
+      "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
+      "automerge": true
+    }
+  ],
+  "lockFileMaintenance": {
+    "enabled": true,
+    "recreateClosed": true,
+    "rebaseStalePrs": true,
+    "branchTopic": "lock-file-maintenance",
+    "commitMessageAction": "Lock file maintenance",
+    "schedule": ["before 5am on monday"],
+    "prBodyDefinitions": {
+      "Change": "All locks refreshed"
+    }
+  }
 }
