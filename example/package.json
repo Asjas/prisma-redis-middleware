@@ -19,7 +19,7 @@
     "prisma:migrate:dev": "prisma migrate dev"
   },
   "dependencies": {
-    "ioredis": "5.2.5",
+    "ioredis": "5.2.6",
     "pino": "8.8.0",
     "prisma": "4.9.0",
     "prisma-redis-middleware": "4.6.0"
