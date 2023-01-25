@@ -1,6 +1,7 @@
 .vscode
 .github
 .nyc_output
+.DS_Store
 node_modules
 test
 renovate.json
