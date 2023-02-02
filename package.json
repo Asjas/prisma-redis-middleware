@@ -29,7 +29,7 @@
     "analyze": "size-limit --why"
   },
   "dependencies": {
-    "async-cache-dedupe": "1.8.0",
+    "async-cache-dedupe": "1.8.1",
     "ioredis": "5.3.0"
   },
   "devDependencies": {
