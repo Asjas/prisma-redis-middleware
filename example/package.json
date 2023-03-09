@@ -27,7 +27,7 @@
   "devDependencies": {
     "@prisma/client": "4.11.0",
     "@types/ioredis": "4.28.10",
-    "@types/node": "18.14.6",
+    "@types/node": "18.15.0",
     "nodemon": "2.0.21",
     "rimraf": "4.4.0",
     "ts-node": "10.9.1",
