@@ -45,11 +45,21 @@ export type Middleware<T = any> = (
 
 export type FetchFromPrisma = (params: MiddlewareParams) => Promise<Result>;
 
+export type RedisMemoryStorage = {
+  type: "redis";
+  options?: RedisMemoryOptions;
+}
+
 export type RedisMemoryOptions = {
   client: Redis;
   invalidation?: boolean | { referencesTTL?: number };
   log?: any;
 };
+
+export type MemoryStorage = {
+  type: "memory";
+  options?: MemoryStorageOptions;
+}
 
 export type MemoryStorageOptions = {
   size?: number;
@@ -67,15 +77,7 @@ export type CreatePrismaRedisCache = {
     excludeMethods?: PrismaQueryAction[];
     invalidateRelated?: string[] | Prisma.ModelName[];
   }[];
-  storage?:
-    | {
-        type: "redis";
-        options?: RedisMemoryOptions;
-      }
-    | {
-        type: "memory";
-        options?: MemoryStorageOptions;
-      };
+  storage?: RedisMemoryStorage | MemoryStorage;
   cacheTime?: number;
   excludeModels?: string[] | Prisma.ModelName[];
   excludeMethods?: PrismaQueryAction[];
