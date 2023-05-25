@@ -200,6 +200,27 @@ Options:
       });
       ```
 
+- `transformer`: (optional) the transformer to used to serialize and deserialize the cache entries. It must be an object
+  with the following methods:
+
+  - `serialize`: a function that receives the result of the original function and returns a serializable object.
+  - `deserialize`: a function that receives the serialized object and returns the original result.
+
+  - Default is `undefined`, so the default transformer is used.
+
+    Example
+
+    ```js
+    import superjson from "superjson";
+
+    createPrismaRedisCache({
+      transformer: {
+        serialize: (result) => superjson.serialize(result),
+        deserialize: (serialized) => superjson.deserialize(serialized),
+      },
+    });
+    ```
+
 ## Debugging
 
 You can pass functions for `onMiss`, `onHit`, `onError` and `onDedupe` to `createPrismaRedisCache` which can then be
