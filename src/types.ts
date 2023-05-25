@@ -85,4 +85,8 @@ export type CreatePrismaRedisCache = {
   onHit?: (key: string) => void;
   onMiss?: (key: string) => void;
   onDedupe?: (key: string) => void;
+  transformer?: {
+    serialize: (data: any) => any;
+    deserialize: (data: any) => any;
+  };
 };
