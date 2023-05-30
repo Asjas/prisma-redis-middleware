@@ -34,7 +34,7 @@
   },
   "devDependencies": {
     "@ianvs/prettier-plugin-sort-imports": "4.0.0",
-    "@prisma/client": "4.14.1",
+    "@prisma/client": "4.15.0",
     "@size-limit/preset-small-lib": "8.2.4",
     "@types/ioredis-mock": "8.2.2",
     "@vitest/coverage-c8": "0.31.2",
