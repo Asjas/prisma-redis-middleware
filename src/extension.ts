@@ -1,4 +1,4 @@
-import { Prisma } from "@prisma/client";
+import { Prisma } from "@prisma/client/extension";
 import { createCache } from "async-cache-dedupe";
 import { defaultCacheMethods, defaultMutationMethods } from "./cacheMethods";
 import type { CreatePrismaRedisCache, PrismaAction, PrismaMutationAction, PrismaQueryAction } from "./types";
