@@ -3,7 +3,7 @@
   "description": "Example of using Prisma Redis Middleware for caching results of queries in Redis",
   "engines": {
     "node": "^14.x || ^16.x || ^18.0.0",
-    "npm": "^7.x || ^8.x || ^9.0.0"
+    "npm": "^10.0.0"
   },
   "author": "A-J Roos <asjas@hey.com>",
   "license": "Hippocratic-3.0",
@@ -20,16 +20,16 @@
   },
   "dependencies": {
     "ioredis": "5.3.2",
-    "pino": "8.15.1",
-    "prisma": "5.2.0",
+    "pino": "8.15.3",
+    "prisma": "5.3.1",
     "prisma-redis-middleware": "4.8.0"
   },
   "devDependencies": {
-    "@prisma/client": "5.2.0",
+    "@prisma/client": "5.3.1",
     "@types/ioredis": "4.28.10",
-    "@types/node": "18.17.7",
+    "@types/node": "18.18.3",
     "nodemon": "3.0.1",
-    "rimraf": "5.0.1",
+    "rimraf": "5.0.5",
     "ts-node": "10.9.1",
     "typescript": "5.2.2"
   }
