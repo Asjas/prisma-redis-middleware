@@ -21,11 +21,11 @@
   "dependencies": {
     "ioredis": "5.3.2",
     "pino": "8.16.1",
-    "prisma": "5.4.2",
+    "prisma": "5.5.2",
     "prisma-redis-middleware": "4.8.0"
   },
   "devDependencies": {
-    "@prisma/client": "5.4.2",
+    "@prisma/client": "5.5.2",
     "@types/ioredis": "4.28.10",
     "@types/node": "20.8.8",
     "nodemon": "3.0.1",
