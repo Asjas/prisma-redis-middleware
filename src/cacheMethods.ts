@@ -19,5 +19,5 @@ export const defaultMutationMethods: PrismaMutationAction[] = [
   "upsert",
   "delete",
   "deleteMany",
-  "executeRawUnsafe",
+  "executeRaw",
 ];
