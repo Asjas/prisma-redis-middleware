@@ -1,27 +1,5 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "dependencyDashboard": false,
-  "extends": ["config:base"],
-  "timezone": "Africa/Johannesburg",
-  "assignees": ["A-J Roos"],
-  "reviewers": ["A-J Roos"],
-  "labels": ["renovate"],
-  "rangeStrategy": "update-lockfile",
-  "packageRules": [
-    {
-      "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
-      "automerge": true
-    }
-  ],
-  "lockFileMaintenance": {
-    "enabled": true,
-    "recreateClosed": true,
-    "rebaseStalePrs": true,
-    "branchTopic": "lock-file-maintenance",
-    "commitMessageAction": "Lock file maintenance",
-    "schedule": ["before 5am on monday"],
-    "prBodyDefinitions": {
-      "Change": "All locks refreshed"
-    }
-  }
+  "enabled": false
 }
